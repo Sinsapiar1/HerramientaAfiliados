@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Predictor - MarketInsight Pro</title>
+    <meta name="description" content="Predictor de tendencias avanzado para marketing de afiliados">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            --secondary-color: #4299e1;
+            --accent-color: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #0f1419 0%, #2d3748 100%);
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --card-bg: rgba(45, 55, 72, 0.8);
+            --card-bg-solid: #2d3748;
+            --border-color: rgba(226, 232, 240, 0.1);
+            --border-color-strong: rgba(226, 232, 240, 0.2);
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --error-color: #f56565;
+            --info-color: #4299e1;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --transition-normal: 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .header {
+            background: rgba(15, 20, 25, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            min-height: 44px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding: var(--spacing-xl) 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .predictor-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .predictor-form {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+            position: sticky;
+            top: calc(80px + var(--spacing-xl));
+        }
+
+        .form-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .input-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .input-field,
+        .select-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: rgba(45, 55, 72, 0.5);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all var(--transition-normal);
+        }
+
+        .input-field:focus,
+        .select-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            font-size: 0.875rem;
+        }
+
+        .checkbox-label:hover {
+            background: rgba(226, 232, 240, 0.05);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+            flex-shrink: 0;
+        }
+
+        .checkmark::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+            opacity: 1;
+        }
+
+        .results-area {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            min-height: 600px;
+        }
+
+        .results-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .results-empty .icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .trend-cards {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .trend-card {
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .trend-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .trend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .trend-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .trend-score {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .trend-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .meta-item {
+            text-align: center;
+            padding: var(--spacing-sm);
+            background: rgba(226, 232, 240, 0.05);
+            border-radius: var(--radius-md);
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .trend-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+
+        .trend-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .insight-section {
+            background: rgba(226, 232, 240, 0.03);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .insight-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .insight-content {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(72, 187, 120, 0.3);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .toast {
+            background: var(--card-bg-solid);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .toast.success { border-left: 4px solid var(--success-color); }
+        .toast.error { border-left: 4px solid var(--error-color); }
+        .toast.warning { border-left: 4px solid var(--warning-color); }
+        .toast.info { border-left: 4px solid var(--info-color); }
+
+        .toast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.125rem;
+            padding: 0;
+        }
+
+        .toast-message {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .predictor-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .predictor-form {
+                position: static;
+                order: 1;
+            }
+            
+            .results-area {
+                order: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-sm);
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .predictor-form,
+            .results-area {
+                padding: var(--spacing-lg);
+            }
+            
+            .trend-meta {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .trend-insights {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span>📈</span>
+                    <span>Trend Predictor</span>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a href="index.html" class="btn btn-outline">
+                        🏠 Volver al Principal
+                    </a>
+                    <a href="funnel-architect-standalone.html" class="btn btn-outline">
+                        🎯 Funnel Architect
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <h1 class="page-title">
+                📈 Trend Predictor Avanzado
+            </h1>
+            
+            <div class="predictor-grid">
+                <!-- Form Section -->
+                <div class="predictor-form">
+                    <form id="trendForm">
+                        <!-- API Configuration -->
+                        <div class="form-section">
+                            <h2 class="section-title">
+                                🔑 Configuración
+                            </h2>
+                            
+                            <div class="input-group">
+                                <label for="apiKey">API Key de Google Gemini</label>
+                                <input 
+                                    type="password" 
+                                    id="apiKey" 
+                                    placeholder="Ingresa tu API Key"
+                                    class="input-field"
+                                >
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary" id="saveApiKey">
+                                💾 Guardar y Probar
+                            </button>
+                        </div>
+
+                        <!-- Trend Analysis Settings -->
+                        <div class="form-section">
+                            <h2 class="section-title">
+                                🎯 Configuración del Análisis
+                            </h2>
+                            
+                            <div class="input-group">
+                                <label for="nicho">Nicho o Industria</label>
+                                <input 
+                                    type="text" 
+                                    id="nicho" 
+                                    placeholder="ej: Fitness para mujeres"
+                                    class="input-field"
+                                    required
+                                >
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="mercadoGeo">Mercado Geográfico</label>
+                                <select id="mercadoGeo" class="select-field">
+                                    <option value="Global">Global</option>
+                                    <option value="Estados Unidos">Estados Unidos</option>
+                                    <option value="Canadá">Canadá</option>
+                                    <option value="Reino Unido">Reino Unido</option>
+                                    <option value="Australia">Australia</option>
+                                    <option value="España">España</option>
+                                    <option value="México">México</option>
+                                    <option value="Argentina">Argentina</option>
+                                    <option value="Colombia">Colombia</option>
+                                    <option value="Chile">Chile</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="timeframe">Horizonte Temporal</label>
+                                <select id="timeframe" class="select-field">
+                                    <option value="30 días">Próximos 30 días</option>
+                                    <option value="3 meses">Próximos 3 meses</option>
+                                    <option value="6 meses">Próximos 6 meses</option>
+                                    <option value="1 año">Próximo año</option>
+                                    <option value="2 años">Próximos 2 años</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Types -->
+                        <div class="form-section">
+                            <h2 class="section-title">
+                                📊 Tipos de Análisis
+                            </h2>
+                            
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="emergingTrends" checked>
+                                    <span class="checkmark"></span>
+                                    🚀 Tendencias Emergentes
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="seasonality" checked>
+                                    <span class="checkmark"></span>
+                                    📅 Análisis de Estacionalidad
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="competitorAnalysis" checked>
+                                    <span class="checkmark"></span>
+                                    🏆 Análisis de Competidores
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="marketOpportunities" checked>
+                                    <span class="checkmark"></span>
+                                    💡 Oportunidades de Mercado
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="consumerBehavior" checked>
+                                    <span class="checkmark"></span>
+                                    👥 Comportamiento del Consumidor
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="technologyTrends" checked>
+                                    <span class="checkmark"></span>
+                                    💻 Tendencias Tecnológicas
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="socialMedia" checked>
+                                    <span class="checkmark"></span>
+                                    📱 Tendencias en Redes Sociales
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="productInnovation" checked>
+                                    <span class="checkmark"></span>
+                                    ⚡ Innovación de Productos
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary" style="width: 100%;" id="analyzeBtn">
+                            📈 Analizar Tendencias
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-area">
+                    <div class="results-empty" id="resultsEmpty">
+                        <div class="icon">📈</div>
+                        <h3>Predictor de Tendencias Avanzado</h3>
+                        <p>Configura los parámetros y comienza el análisis para descubrir las próximas tendencias en tu nicho.</p>
+                    </div>
+                    
+                    <div class="trend-cards" id="trendCards" style="display: none;">
+                        <!-- Trend cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Analizando tendencias futuras...</h3>
+            <p id="loadingText">Esto puede tomar unos momentos</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            GEMINI_API_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 1000,
+            LOADING_MESSAGES: [
+                'Analizando tendencias futuras...',
+                'Identificando oportunidades emergentes...',
+                'Procesando datos de mercado...',
+                'Evaluando comportamiento del consumidor...',
+                'Generando predicciones...'
+            ]
+        };
+
+        // State
+        let apiKey = localStorage.getItem('trend_predictor_api_key') || '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStoredData();
+            bindEvents();
+        });
+
+        function loadStoredData() {
+            if (apiKey) {
+                document.getElementById('apiKey').value = apiKey;
+            }
+        }
+
+        function bindEvents() {
+            document.getElementById('saveApiKey').addEventListener('click', saveAndTestApiKey);
+            document.getElementById('trendForm').addEventListener('submit', handleTrendAnalysis);
+        }
+
+        async function saveAndTestApiKey() {
+            const keyInput = document.getElementById('apiKey');
+            const key = keyInput.value.trim();
+            
+            if (!key) {
+                showToast('Error', 'Por favor ingresa una API Key válida', 'error');
+                return;
+            }
+            
+            try {
+                // Test the API key
+                const response = await makeApiRequest('Hola, ¿estás funcionando?');
+                
+                if (response) {
+                    apiKey = key;
+                    localStorage.setItem('trend_predictor_api_key', key);
+                    showToast('Éxito', 'API Key guardada y verificada correctamente', 'success');
+                } else {
+                    throw new Error('Respuesta inválida');
+                }
+            } catch (error) {
+                showToast('Error', 'Error al verificar la API Key. Verifica que sea correcta.', 'error');
+            }
+        }
+
+        async function handleTrendAnalysis(e) {
+            e.preventDefault();
+            
+            if (!apiKey) {
+                showToast('Error', 'Configura tu API Key primero', 'error');
+                return;
+            }
+            
+            const formData = collectFormData();
+            
+            if (!formData.nicho) {
+                showToast('Error', 'Por favor especifica un nicho o industria', 'error');
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const prompt = generateTrendPrompt(formData);
+                const response = await makeApiRequest(prompt);
+                
+                if (response) {
+                    displayTrendResults(response);
+                    showToast('Éxito', 'Análisis de tendencias completado', 'success');
+                } else {
+                    throw new Error('No se recibió respuesta válida');
+                }
+            } catch (error) {
+                console.error('Error en análisis:', error);
+                showToast('Error', `Error en el análisis: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function collectFormData() {
+            const selectedAnalysis = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(cb => cb.id);
+            
+            return {
+                nicho: document.getElementById('nicho').value.trim(),
+                mercadoGeo: document.getElementById('mercadoGeo').value,
+                timeframe: document.getElementById('timeframe').value,
+                selectedAnalysis
+            };
+        }
+
+        function generateTrendPrompt(data) {
+            const analysisTypes = {
+                emergingTrends: '🚀 Identificar tendencias emergentes y tecnologías disruptivas',
+                seasonality: '📅 Analizar patrones estacionales y timing óptimo',
+                competitorAnalysis: '🏆 Evaluar movimientos y estrategias de competidores',
+                marketOpportunities: '💡 Detectar gaps y oportunidades no explotadas',
+                consumerBehavior: '👥 Predecir cambios en comportamiento del consumidor',
+                technologyTrends: '💻 Analizar tendencias tecnológicas relevantes',
+                socialMedia: '📱 Evaluar tendencias en redes sociales y contenido viral',
+                productInnovation: '⚡ Identificar oportunidades de innovación de productos'
+            };
+
+            const selectedAnalysisText = data.selectedAnalysis
+                .map(id => analysisTypes[id])
+                .filter(Boolean)
+                .join('\n');
+
+            return `Actúa como EXPERTO FUTURISTA y ANALISTA DE TENDENCIAS especializado en ${data.nicho} para el mercado ${data.mercadoGeo}.
+
+CONTEXTO DEL ANÁLISIS:
+📊 Nicho/Industria: ${data.nicho}
+🌍 Mercado: ${data.mercadoGeo}
+⏰ Horizonte temporal: ${data.timeframe}
+
+🎯 ANÁLISIS SOLICITADOS:
+${selectedAnalysisText}
+
+GENERA exactamente 5 tendencias/predicciones usando el siguiente formato:
+
+=== TENDENCIA [N] ===
+NOMBRE: [Nombre específico de la tendencia]
+SCORE: [0-100] (probabilidad de ocurrencia)
+IMPACTO: [BAJO/MEDIO/ALTO/REVOLUCIONARIO]
+TIMING: [Cuándo será más relevante]
+DURACION: [Cuánto tiempo durará]
+
+DESCRIPCION:
+[Descripción detallada de la tendencia y por qué surgirá]
+
+OPORTUNIDADES:
+[Oportunidades específicas para afiliados y marketers]
+
+MERCADOS_AFECTADOS:
+[Qué mercados y audiencias se verán afectados]
+
+COMPETENCIA:
+[Nivel de competencia esperado y ventana de oportunidad]
+
+MONETIZACION:
+[Formas específicas de monetizar esta tendencia]
+
+REQUERIMIENTOS:
+[Qué se necesita para aprovechar esta tendencia]
+
+RIESGOS:
+[Posibles riesgos y cómo mitigarlos]
+
+INDICADORES:
+[Señales tempranas para confirmar la tendencia]
+
+PRODUCTOS_POTENCIALES:
+[Tipos de productos que serán demandados]
+
+ESTRATEGIA_ENTRADA:
+[Cómo y cuándo entrar al mercado]
+
+=== FIN TENDENCIA [N] ===
+
+RESUMEN EJECUTIVO:
+[Síntesis de las tendencias más prometedoras y plan de acción]
+
+CALENDARIO_IMPLEMENTACION:
+[Timeline recomendado para aprovechar cada tendencia]
+
+Enfócate en predicciones específicas, datos cuantitativos cuando sea posible, y estrategias accionables para ${data.nicho} en ${data.mercadoGeo}.`;
+        }
+
+        function displayTrendResults(response) {
+            document.getElementById('resultsEmpty').style.display = 'none';
+            const cardsContainer = document.getElementById('trendCards');
+            cardsContainer.style.display = 'block';
+            cardsContainer.innerHTML = '';
+
+            try {
+                const trends = parseTrendResponse(response);
+                
+                if (trends.length === 0) {
+                    cardsContainer.innerHTML = '<p>No se pudieron extraer tendencias de la respuesta.</p>';
+                    return;
+                }
+
+                trends.forEach((trend, index) => {
+                    const card = createTrendCard(trend, index + 1);
+                    cardsContainer.appendChild(card);
+                });
+
+                // Add summary if available
+                const summary = extractSummary(response);
+                if (summary) {
+                    const summaryCard = createSummaryCard(summary);
+                    cardsContainer.appendChild(summaryCard);
+                }
+
+            } catch (error) {
+                console.error('Error displaying results:', error);
+                cardsContainer.innerHTML = `
+                    <div class="trend-card">
+                        <h3>Análisis de Tendencias</h3>
+                        <div class="trend-description">${response}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function parseTrendResponse(text) {
+            const trends = [];
+            const trendRegex = /=== TENDENCIA \[(\d+)\] ===([\s\S]*?)(?==== FIN TENDENCIA \[\d+\] ===|=== TENDENCIA \[\d+\] ===|RESUMEN EJECUTIVO|$)/gi;
+            
+            let match;
+            while ((match = trendRegex.exec(text)) !== null) {
+                const trendText = match[2];
+                const trend = parseTrendFromText(trendText);
+                if (trend.nombre) {
+                    trends.push(trend);
+                }
+            }
+            
+            return trends;
+        }
+
+        function parseTrendFromText(text) {
+            return {
+                nombre: extractField(text, 'NOMBRE'),
+                score: extractField(text, 'SCORE') || '75',
+                impacto: extractField(text, 'IMPACTO') || 'MEDIO',
+                timing: extractField(text, 'TIMING'),
+                duracion: extractField(text, 'DURACION'),
+                descripcion: extractField(text, 'DESCRIPCION'),
+                oportunidades: extractField(text, 'OPORTUNIDADES'),
+                mercadosAfectados: extractField(text, 'MERCADOS_AFECTADOS'),
+                competencia: extractField(text, 'COMPETENCIA'),
+                monetizacion: extractField(text, 'MONETIZACION'),
+                requerimientos: extractField(text, 'REQUERIMIENTOS'),
+                riesgos: extractField(text, 'RIESGOS'),
+                indicadores: extractField(text, 'INDICADORES'),
+                productosPotenciales: extractField(text, 'PRODUCTOS_POTENCIALES'),
+                estrategiaEntrada: extractField(text, 'ESTRATEGIA_ENTRADA')
+            };
+        }
+
+        function extractField(text, fieldName) {
+            const patterns = [
+                new RegExp(`${fieldName}:\\s*([\\s\\S]*?)(?=\\n[A-Z_]+:|\\n===|$)`, 'i'),
+                new RegExp(`${fieldName}\\s*:\\s*(.*)`, 'i'),
+                new RegExp(`${fieldName}\\s*([\\s\\S]*?)(?=\\n\\n|\\n[A-Z]|$)`, 'i')
+            ];
+            
+            for (const pattern of patterns) {
+                const match = text.match(pattern);
+                if (match && match[1]) {
+                    return match[1].trim().replace(/^\[|\]$/g, '');
+                }
+            }
+            
+            return '';
+        }
+
+        function extractSummary(text) {
+            const summaryMatch = text.match(/RESUMEN EJECUTIVO:([\s\S]*?)(?=CALENDARIO_IMPLEMENTACION|$)/i);
+            const calendarMatch = text.match(/CALENDARIO_IMPLEMENTACION:([\s\S]*?)$/i);
+            
+            return {
+                resumen: summaryMatch ? summaryMatch[1].trim() : '',
+                calendario: calendarMatch ? calendarMatch[1].trim() : ''
+            };
+        }
+
+        function createTrendCard(trend, index) {
+            const card = document.createElement('div');
+            card.className = 'trend-card';
+            
+            const impactColor = {
+                'BAJO': '#718096',
+                'MEDIO': '#4299e1',
+                'ALTO': '#f59e0b',
+                'REVOLUCIONARIO': '#f56565'
+            };
+
+            card.innerHTML = `
+                <div class="trend-header">
+                    <h3 class="trend-title">${trend.nombre || `Tendencia ${index}`}</h3>
+                    <div class="trend-score">${trend.score}/100</div>
+                </div>
+                
+                <div class="trend-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Impacto</div>
+                        <div class="meta-value" style="color: ${impactColor[trend.impacto] || impactColor.MEDIO}">${trend.impacto}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Timing</div>
+                        <div class="meta-value">${trend.timing || 'Por determinar'}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Duración</div>
+                        <div class="meta-value">${trend.duracion || 'Variable'}</div>
+                    </div>
+                </div>
+                
+                <div class="trend-description">
+                    ${trend.descripcion || 'Tendencia emergente con potencial en el nicho analizado.'}
+                </div>
+                
+                <div class="trend-insights">
+                    <div class="insight-section">
+                        <div class="insight-title">💡 Oportunidades</div>
+                        <div class="insight-content">${trend.oportunidades || 'Múltiples oportunidades de monetización'}</div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <div class="insight-title">🎯 Mercados Afectados</div>
+                        <div class="insight-content">${trend.mercadosAfectados || 'Diversos segmentos del mercado'}</div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <div class="insight-title">💰 Monetización</div>
+                        <div class="insight-content">${trend.monetizacion || 'Estrategias de monetización múltiples'}</div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <div class="insight-title">⚡ Estrategia de Entrada</div>
+                        <div class="insight-content">${trend.estrategiaEntrada || 'Plan de entrada al mercado'}</div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <div class="insight-title">⚠️ Riesgos</div>
+                        <div class="insight-content">${trend.riesgos || 'Riesgos generales del mercado'}</div>
+                    </div>
+                    
+                    <div class="insight-section">
+                        <div class="insight-title">📊 Indicadores</div>
+                        <div class="insight-content">${trend.indicadores || 'Métricas de seguimiento'}</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function createSummaryCard(summary) {
+            const card = document.createElement('div');
+            card.className = 'trend-card';
+            card.style.background = 'rgba(72, 187, 120, 0.1)';
+            card.style.borderColor = 'rgba(72, 187, 120, 0.3)';
+            
+            card.innerHTML = `
+                <div class="trend-header">
+                    <h3 class="trend-title">📋 Resumen Ejecutivo</h3>
+                </div>
+                
+                <div class="trend-insights">
+                    <div class="insight-section">
+                        <div class="insight-title">🎯 Síntesis</div>
+                        <div class="insight-content">${summary.resumen}</div>
+                    </div>
+                    
+                    ${summary.calendario ? `
+                    <div class="insight-section">
+                        <div class="insight-title">📅 Calendario de Implementación</div>
+                        <div class="insight-content">${summary.calendario}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        async function makeApiRequest(prompt, retries = CONFIG.MAX_RETRIES) {
+            if (!apiKey) {
+                throw new Error('API Key no configurada');
+            }
+            
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 8192,
+                }
+            };
+            
+            try {
+                const response = await fetch(
+                    `${CONFIG.GEMINI_API_ENDPOINT}?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody)
+                    }
+                );
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error('Respuesta inválida de la API');
+                }
+                
+            } catch (error) {
+                console.error('Error en API request:', error);
+                
+                if (retries > 0) {
+                    console.log(`Reintentando... (${retries} intentos restantes)`);
+                    await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+                    return makeApiRequest(prompt, retries - 1);
+                }
+                
+                throw error;
+            }
+        }
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                if (show) {
+                    overlay.classList.add('active');
+                    updateLoadingMessage();
+                } else {
+                    overlay.classList.remove('active');
+                }
+            }
+        }
+
+        function updateLoadingMessage() {
+            const messages = CONFIG.LOADING_MESSAGES;
+            let currentIndex = 0;
+            const textEl = document.getElementById('loadingText');
+            
+            const interval = setInterval(() => {
+                if (!document.getElementById('loadingOverlay').classList.contains('active')) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                currentIndex = (currentIndex + 1) % messages.length;
+                if (textEl) {
+                    textEl.textContent = messages[currentIndex];
+                }
+            }, 2000);
+        }
+
+        function showToast(title, message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <div class="toast-title">${title}</div>
+                    <button class="toast-close">&times;</button>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.remove();
+            });
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

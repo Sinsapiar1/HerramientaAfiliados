@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketInsight Pro - Affiliate Edition</title>
+    <meta name="description" content="Suite completa de marketing automation para afiliados potenciada por IA">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🚀</span>
+                    <span>MarketInsight Pro</span>
+                    <span class="version">v4.0</span>
+                </div>
+                
+                <div class="features-badges">
+                    <span class="badge">🎯 Detector de Productos</span>
+                    <span class="badge">🔍 Validador de Ofertas</span>
+                    <span class="badge">✨ Contenido Viral</span>
+                    <span class="badge">📊 IA Analytics</span>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                    🌙
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- API Configuration -->
+                <section class="api-section">
+                    <h2 class="section-title">
+                        🔑 Configuración API
+                    </h2>
+                    
+                    <div class="input-group">
+                        <label for="apiKey">API Key de Google Gemini</label>
+                        <input 
+                            type="password" 
+                            id="apiKey" 
+                            placeholder="Ingresa tu API Key"
+                            class="input-field"
+                        >
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="saveApiKey">
+                            💾 Guardar
+                        </button>
+                        <button class="btn btn-secondary" id="testApiKey">
+                            🧪 Probar
+                        </button>
+                        <button class="btn btn-outline" id="toggleDebug" title="Activar modo debug">
+                            🔧 Debug
+                        </button>
+                    </div>
+                    
+                    <div class="api-status" id="apiStatus"></div>
+                </section>
+
+                <!-- Analysis Options -->
+                <section class="analysis-section">
+                    <h2 class="section-title">
+                        🎯 Opciones de Análisis
+                    </h2>
+                    
+                    <div class="analysis-group">
+                        <h3 class="analysis-group-title">Análisis Básicos</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="competencia" checked>
+                                <span class="checkmark"></span>
+                                🏆 Análisis de Competencia
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="tendencias" checked>
+                                <span class="checkmark"></span>
+                                📈 Análisis de Tendencias
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="programas" checked>
+                                <span class="checkmark"></span>
+                                🤝 Programas de Afiliados
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="keywords" checked>
+                                <span class="checkmark"></span>
+                                🔍 Keywords Rentables
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="estacionalidad" checked>
+                                <span class="checkmark"></span>
+                                📅 Estacionalidad
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rentabilidad" checked>
+                                <span class="checkmark"></span>
+                                💰 Rentabilidad
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="analysis-group">
+                        <h3 class="analysis-group-title">Análisis Expertos ⭐</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="metricas" checked>
+                                <span class="checkmark expert"></span>
+                                📊 Métricas de Conversión
+                            </label>
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="financiero" checked>
+                                <span class="checkmark expert"></span>
+                                💹 Análisis Financiero
+                            </label>
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="inteligencia" checked>
+                                <span class="checkmark expert"></span>
+                                🕵️ Inteligencia Competitiva
+                            </label>
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="journey" checked>
+                                <span class="checkmark expert"></span>
+                                🛤️ Customer Journey
+                            </label>
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="canales" checked>
+                                <span class="checkmark expert"></span>
+                                📺 Canales de Tráfico
+                            </label>
+                            <label class="checkbox-label expert">
+                                <input type="checkbox" id="funnels" checked>
+                                <span class="checkmark expert"></span>
+                                🎯 Funnels y Upsells
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <h2 class="section-title">
+                        ⚡ Acciones Rápidas
+                    </h2>
+                    
+                    <div class="quick-buttons">
+                        <button class="btn btn-outline" id="validarOferta">
+                            🔍 Validar Oferta
+                        </button>
+                        <button class="btn btn-outline" id="generarAvatar">
+                            👥 Crear Avatar
+                        </button>
+                        <button class="btn btn-outline" id="contenidoViral">
+                            ✨ Contenido Viral
+                        </button>
+                        <button class="btn btn-outline" id="calculadoraProfit">
+                            💰 Calculadora
+                        </button>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                <!-- Configuration Form -->
+                <section class="configuration-section" id="configurationSection">
+                    <h1 class="page-title">
+                        🎯 Configuración del Análisis
+                    </h1>
+                    
+                    <form id="configurationForm" class="configuration-form">
+                        <!-- Configuración Básica -->
+                        <div class="config-group">
+                            <h2 class="config-title">📊 Configuración Básica</h2>
+                            
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="nicho">Nicho Específico</label>
+                                    <input 
+                                        type="text" 
+                                        id="nicho" 
+                                        placeholder="ej: Pérdida de peso para mujeres +40"
+                                        class="input-field"
+                                        required
+                                    >
+                                    <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+                                        ✅ Específico: "Trading de criptomonedas para principiantes"<br>
+                                        ❌ Genérico: "finanzas" o "trading"
+                                    </small>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="publico">Público Objetivo</label>
+                                    <input 
+                                        type="text" 
+                                        id="publico" 
+                                        placeholder="ej: Mujeres 35-50, ingresos medios-altos"
+                                        class="input-field"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="rangoPrecio">Rango de Precios</label>
+                                    <select id="rangoPrecio" class="select-field" required>
+                                        <option value="">Seleccionar rango...</option>
+                                        <option value="<$50">Menos de $50</option>
+                                        <option value="$50-$100">$50 - $100</option>
+                                        <option value="$100-$200">$100 - $200</option>
+                                        <option value="$200-$300">$200 - $300</option>
+                                        <option value="$300-$400">$300 - $400</option>
+                                        <option value="$400-$500">$400 - $500</option>
+                                        <option value="$500+">Más de $500</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="tipoProducto">Tipo de Producto</label>
+                                    <select id="tipoProducto" class="select-field" required>
+                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="Digital">Digital</option>
+                                        <option value="Físico">Físico</option>
+                                        <option value="Servicio">Servicio</option>
+                                        <option value="Software">Software</option>
+                                        <option value="Curso">Curso Online</option>
+                                        <option value="Membership">Membresía</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="canalPrincipal">Canal Principal</label>
+                                    <select id="canalPrincipal" class="select-field" required>
+                                        <option value="">Seleccionar canal...</option>
+                                        <option value="Facebook Ads">Facebook Ads</option>
+                                        <option value="Google Ads">Google Ads</option>
+                                        <option value="TikTok Ads">TikTok Ads</option>
+                                        <option value="Instagram Ads">Instagram Ads</option>
+                                        <option value="YouTube Ads">YouTube Ads</option>
+                                        <option value="SEO Orgánico">SEO Orgánico</option>
+                                        <option value="Email Marketing">Email Marketing</option>
+                                        <option value="Influencer Marketing">Influencer Marketing</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="experiencia">Nivel de Experiencia</label>
+                                    <select id="experiencia" class="select-field" required>
+                                        <option value="">Seleccionar nivel...</option>
+                                        <option value="Principiante">Principiante</option>
+                                        <option value="Intermedio">Intermedio</option>
+                                        <option value="Avanzado">Avanzado</option>
+                                        <option value="Experto">Experto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Configuración Experta -->
+                        <div class="config-group expert-config">
+                            <h2 class="config-title">⭐ Configuración Experta</h2>
+                            
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="presupuestoAds">Presupuesto Publicitario Mensual</label>
+                                    <select id="presupuestoAds" class="select-field">
+                                        <option value="">Seleccionar presupuesto...</option>
+                                        <option value="$50-$200">$50 - $200</option>
+                                        <option value="$200-$500">$200 - $500</option>
+                                        <option value="$500-$1000">$500 - $1,000</option>
+                                        <option value="$1000-$2500">$1,000 - $2,500</option>
+                                        <option value="$2500-$5000">$2,500 - $5,000</option>
+                                        <option value="$5000+">Más de $5,000</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="roiObjetivo">ROI Objetivo</label>
+                                    <select id="roiObjetivo" class="select-field">
+                                        <option value="">Seleccionar ROI...</option>
+                                        <option value="2x">2x (100% retorno)</option>
+                                        <option value="3x">3x (200% retorno)</option>
+                                        <option value="4x">4x (300% retorno)</option>
+                                        <option value="5x">5x (400% retorno)</option>
+                                        <option value="7x">7x (600% retorno)</option>
+                                        <option value="10x+">10x+ (900%+ retorno)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="breakEvenTime">Tiempo Break-Even</label>
+                                    <select id="breakEvenTime" class="select-field">
+                                        <option value="">Seleccionar tiempo...</option>
+                                        <option value="1 semana">1 semana</option>
+                                        <option value="2 semanas">2 semanas</option>
+                                        <option value="1 mes">1 mes</option>
+                                        <option value="2 meses">2 meses</option>
+                                        <option value="3 meses">3 meses</option>
+                                        <option value="6+ meses">6+ meses</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="tipoConversion">Tipo de Conversión</label>
+                                    <select id="tipoConversion" class="select-field">
+                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="Venta directa">Venta directa</option>
+                                        <option value="Lead generation">Lead generation</option>
+                                        <option value="Suscripción">Suscripción recurrente</option>
+                                        <option value="Trial gratuito">Trial gratuito</option>
+                                        <option value="Descarga">Descarga/Registro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="dispositivoTarget">Dispositivo Objetivo</label>
+                                    <select id="dispositivoTarget" class="select-field">
+                                        <option value="">Seleccionar dispositivo...</option>
+                                        <option value="Mobile">Mobile (Smartphone)</option>
+                                        <option value="Desktop">Desktop</option>
+                                        <option value="Tablet">Tablet</option>
+                                        <option value="Ambos">Mobile + Desktop</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="mercadoGeo">Mercado Geográfico</label>
+                                    <select id="mercadoGeo" class="select-field">
+                                        <option value="">Seleccionar mercado...</option>
+                                        <option value="Tier 1">Tier 1 (US, CA, UK, AU)</option>
+                                        <option value="Tier 2">Tier 2 (ES, IT, FR, DE)</option>
+                                        <option value="Tier 3">Tier 3 (LATAM, Eastern EU)</option>
+                                        <option value="Global">Global</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="fillExampleData" style="margin-bottom: 1rem;">
+                                📝 Llenar Datos de Ejemplo
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-large" id="analyzeButton">
+                                🚀 Analizar y Detectar Productos Ganadores
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Results Section -->
+                <section class="results-section" id="resultsSection" style="display: none;">
+                    <div class="results-header">
+                        <h1 class="page-title">
+                            🎯 Productos Ganadores Detectados
+                        </h1>
+                        <button class="btn btn-secondary" id="newAnalysisBtn">
+                            🔄 Nuevo Análisis
+                        </button>
+                    </div>
+                    
+                    <div class="products-container" id="productsContainer">
+                        <!-- Products will be dynamically inserted here -->
+                    </div>
+
+                    <div class="analysis-tools">
+                        <h2 class="section-title">🛠️ Herramientas de Análisis</h2>
+                        <div class="tools-grid">
+                            <button class="tool-card" id="openValidador">
+                                <span class="tool-icon">🔍</span>
+                                <span class="tool-title">Validar Oferta</span>
+                                <span class="tool-desc">Analiza URLs específicas</span>
+                            </button>
+                            
+                            <button class="tool-card" id="openContenido">
+                                <span class="tool-icon">✨</span>
+                                <span class="tool-title">Contenido Viral</span>
+                                <span class="tool-desc">Genera posts optimizados</span>
+                            </button>
+                            
+                            <button class="tool-card" id="openAvatar">
+                                <span class="tool-icon">👥</span>
+                                <span class="tool-title">Avatar Generator</span>
+                                <span class="tool-desc">Crea buyer personas</span>
+                            </button>
+                            
+                            <button class="tool-card" id="openCalculadora">
+                                <span class="tool-icon">💰</span>
+                                <span class="tool-title">Profit Calculator</span>
+                                <span class="tool-desc">Proyecta ganancias</span>
+                            </button>
+                            
+                            <button class="tool-card" id="openTemplates">
+                                <span class="tool-icon">📝</span>
+                                <span class="tool-title">Copy Templates</span>
+                                <span class="tool-desc">Ads y emails listos</span>
+                            </button>
+                            
+                            <button class="tool-card" id="openSpy">
+                                <span class="tool-icon">🕵️</span>
+                                <span class="tool-title">Creative Spy</span>
+                                <span class="tool-desc">Analiza competencia</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Analizando productos ganadores...</h3>
+            <p id="loadingText">Esto puede tomar unos momentos</p>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Validador de Ofertas Modal -->
+    <div class="modal" id="validadorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Validador de Ofertas Inteligente</h2>
+                <button class="modal-close" data-modal="validadorModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="ofertaUrl">URL de la Oferta</label>
+                    <input 
+                        type="url" 
+                        id="ofertaUrl" 
+                        placeholder="https://ejemplo.com/oferta"
+                        class="input-field"
+                    >
+                </div>
+                <button class="btn btn-primary" id="validarOfertaBtn">
+                    🔍 Validar Oferta
+                </button>
+                <div class="validacion-results" id="validacionResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Generator Modal -->
+    <div class="modal" id="avatarModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>👥 Generador de Avatares Múltiples</h2>
+                <button class="modal-close" data-modal="avatarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-tabs">
+                    <button class="tab-btn active" data-tab="automatico">🤖 Automático</button>
+                    <button class="tab-btn" data-tab="personalizado">⚙️ Personalizado</button>
+                </div>
+                
+                <div class="tab-content active" id="automatico">
+                    <p>Genera avatares basados en la configuración de tu análisis actual</p>
+                    <button class="btn btn-primary" id="generarAvatarAuto">
+                        🎯 Generar Avatares Automáticos
+                    </button>
+                </div>
+                
+                <div class="tab-content" id="personalizado">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="avatarGender">Género</label>
+                            <select id="avatarGender" class="select-field">
+                                <option value="Mujer">Mujer</option>
+                                <option value="Hombre">Hombre</option>
+                                <option value="No binario">No binario</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="avatarAge">Edad</label>
+                            <input type="text" id="avatarAge" placeholder="25-35" class="input-field">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="avatarIncome">Ingresos</label>
+                            <select id="avatarIncome" class="select-field">
+                                <option value="Bajos">Bajos (<$30k)</option>
+                                <option value="Medios">Medios ($30k-$75k)</option>
+                                <option value="Medios-Altos">Medios-Altos ($75k-$150k)</option>
+                                <option value="Altos">Altos (>$150k)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="avatarFamily">Situación Familiar</label>
+                            <select id="avatarFamily" class="select-field">
+                                <option value="Soltero/a">Soltero/a</option>
+                                <option value="En pareja">En pareja</option>
+                                <option value="Casado/a sin hijos">Casado/a sin hijos</option>
+                                <option value="Familia con hijos">Familia con hijos</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="avatarMainProblem">Problema Principal</label>
+                        <input type="text" id="avatarMainProblem" placeholder="¿Cuál es su mayor frustración?" class="input-field">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="avatarMainDesire">Deseo Principal</label>
+                        <input type="text" id="avatarMainDesire" placeholder="¿Qué es lo que más desea lograr?" class="input-field">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="generarAvatarPersonalizado">
+                        👥 Generar Avatar Personalizado
+                    </button>
+                </div>
+                
+                <div class="avatar-results" id="avatarResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Viral Modal -->
+    <div class="modal" id="contenidoModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>✨ Generador de Contenido Viral</h2>
+                <button class="modal-close" data-modal="contenidoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="plataforma">Plataforma</label>
+                        <select id="plataforma" class="select-field">
+                            <option value="TikTok">TikTok/Reels</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Email">Email</option>
+                            <option value="Blog">Blog Post</option>
+                            <option value="YouTube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="salesAngle">Ángulo de Venta</label>
+                        <select id="salesAngle" class="select-field">
+                            <option value="Problema/Solución">Problema/Solución</option>
+                            <option value="Antes/Después">Antes/Después</option>
+                            <option value="Testimonial">Testimonial</option>
+                            <option value="Educativo">Educativo</option>
+                            <option value="Tendencia">Tendencia</option>
+                            <option value="Comparación">Comparación</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="controversyLevel">Nivel de Controversia</label>
+                        <select id="controversyLevel" class="select-field">
+                            <option value="Bajo">Bajo (Suave)</option>
+                            <option value="Medio">Medio (Provocativo)</option>
+                            <option value="Alto">Alto (Controversial)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="powerWords">Power Words</label>
+                        <select id="powerWords" class="select-field">
+                            <option value="Emocionales">Emocionales</option>
+                            <option value="Urgencia">Urgencia</option>
+                            <option value="Exclusividad">Exclusividad</option>
+                            <option value="Beneficios">Beneficios</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="productoContenido">Producto (opcional)</label>
+                    <input type="text" id="productoContenido" placeholder="Nombre del producto específico" class="input-field">
+                </div>
+                
+                <button class="btn btn-primary" id="generarContenidoBtn">
+                    ✨ Generar Contenido Viral
+                </button>
+                
+                <div class="contenido-results" id="contenidoResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculadora de Profit Modal -->
+    <div class="modal" id="calculadoraModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>💰 Calculadora de Profit Inteligente</h2>
+                <button class="modal-close" data-modal="calculadoraModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="visitasDiarias">Visitas Diarias Estimadas</label>
+                        <input type="number" id="visitasDiarias" placeholder="100" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label for="conversionRate">Tasa de Conversión (%)</label>
+                        <input type="number" id="conversionRate" placeholder="2.5" step="0.1" class="input-field">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="comisionPromedio">Comisión Promedio ($)</label>
+                        <input type="number" id="comisionPromedio" placeholder="50" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label for="costoAdquisicion">Costo por Adquisición ($)</label>
+                        <input type="number" id="costoAdquisicion" placeholder="25" class="input-field">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="calcularProfitBtn">
+                    📊 Calcular Proyecciones
+                </button>
+                
+                <div class="profit-results" id="profitResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy Templates Modal -->
+    <div class="modal" id="templatesModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📝 Copy Templates System v4.0</h2>
+                <button class="modal-close" data-modal="templatesModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="template-tabs">
+                    <button class="tab-btn active" data-tab="facebook-ads">📘 Facebook Ads</button>
+                    <button class="tab-btn" data-tab="google-ads">🔍 Google Ads</button>
+                    <button class="tab-btn" data-tab="email-sequence">📧 Email Sequence</button>
+                </div>
+                
+                <div class="tab-content active" id="facebook-ads">
+                    <div class="input-group">
+                        <label for="facebookProducto">Producto para el Ad</label>
+                        <input type="text" id="facebookProducto" placeholder="Nombre del producto" class="input-field">
+                    </div>
+                    <button class="btn btn-primary" id="generarFacebookAd">
+                        📘 Generar Facebook Ad
+                    </button>
+                    <div class="template-results" id="facebookResults"></div>
+                </div>
+                
+                <div class="tab-content" id="google-ads">
+                    <div class="input-group">
+                        <label for="googleProducto">Producto para el Ad</label>
+                        <input type="text" id="googleProducto" placeholder="Nombre del producto" class="input-field">
+                    </div>
+                    <button class="btn btn-primary" id="generarGoogleAd">
+                        🔍 Generar Google Ad
+                    </button>
+                    <div class="template-results" id="googleResults"></div>
+                </div>
+                
+                <div class="tab-content" id="email-sequence">
+                    <div class="input-group">
+                        <label for="emailProducto">Producto para la Secuencia</label>
+                        <input type="text" id="emailProducto" placeholder="Nombre del producto" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label for="emailLength">Longitud de la Secuencia</label>
+                        <select id="emailLength" class="select-field">
+                            <option value="3">3 emails</option>
+                            <option value="5">5 emails</option>
+                            <option value="7">7 emails</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="generarEmailSequence">
+                        📧 Generar Secuencia de Emails
+                    </button>
+                    <div class="template-results" id="emailResults"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Creative Spy Modal -->
+    <div class="modal" id="spyModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>🕵️ Creative Spy System</h2>
+                <button class="modal-close" data-modal="spyModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="spyNicho">Nicho a Analizar</label>
+                    <input type="text" id="spyNicho" placeholder="Fitness, Marketing, etc." class="input-field">
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="spyPlataforma">Plataforma</label>
+                        <select id="spyPlataforma" class="select-field">
+                            <option value="Facebook">Facebook</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="YouTube">YouTube</option>
+                            <option value="Google">Google Ads</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="spyTiempo">Período de Análisis</label>
+                        <select id="spyTiempo" class="select-field">
+                            <option value="7 días">Últimos 7 días</option>
+                            <option value="30 días">Últimos 30 días</option>
+                            <option value="90 días">Últimos 90 días</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="analizarCreativesBtn">
+                    🕵️ Analizar Creatividades
+                </button>
+                
+                <div class="spy-results" id="spyResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
