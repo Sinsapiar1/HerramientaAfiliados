@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Detector de Productos MarketInsight Pro</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: #48bb78;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #38a169;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .product-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+        }
+        .error {
+            color: #e53e3e;
+            background: #fed7d7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #38a169;
+            background: #c6f6d5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test - Detector de Productos</h1>
+        <p>Prueba el detector de productos mejorado sin fallbacks estáticos</p>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="apiKey">API Key de Google Gemini:</label>
+                <input type="password" id="apiKey" placeholder="Ingresa tu API Key" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nicho">Nicho (sé específico):</label>
+                <input type="text" id="nicho" value="Pérdida de peso para mujeres +40 años" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="publico">Público objetivo:</label>
+                <input type="text" id="publico" value="Mujeres de 40-55 años que quieren perder peso de forma saludable" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="canalPrincipal">Canal principal:</label>
+                <select id="canalPrincipal" required>
+                    <option value="Facebook Ads">Facebook Ads</option>
+                    <option value="Google Ads">Google Ads</option>
+                    <option value="TikTok Ads">TikTok Ads</option>
+                    <option value="Instagram Ads">Instagram Ads</option>
+                    <option value="YouTube Ads">YouTube Ads</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="experiencia">Experiencia:</label>
+                <select id="experiencia" required>
+                    <option value="Principiante">Principiante</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="tipoProducto">Tipo de producto:</label>
+                <select id="tipoProducto" required>
+                    <option value="digital">Digital</option>
+                    <option value="fisico">Físico</option>
+                    <option value="servicio">Servicio</option>
+                    <option value="software">Software</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="rangoPrecio">Rango de precio:</label>
+                <select id="rangoPrecio" required>
+                    <option value="$0-$50">$0-$50</option>
+                    <option value="$50-$100">$50-$100</option>
+                    <option value="$100-$200">$100-$200</option>
+                    <option value="$200-$500">$200-$500</option>
+                    <option value="$500+">$500+</option>
+                </select>
+            </div>
+            
+            <button type="submit">🚀 Probar Detector de Productos</button>
+        </form>
+        
+        <div id="results" class="results" style="display: none;">
+            <h2>📊 Resultados del Test</h2>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            // Mostrar loading
+            resultsContent.innerHTML = '<p>🔄 Analizando productos...</p>';
+            resultsDiv.style.display = 'block';
+            
+            try {
+                // Configurar API Key
+                const apiKey = document.getElementById('apiKey').value;
+                AppState.apiKey = apiKey;
+                localStorage.setItem('marketinsight_api_key', apiKey);
+                
+                // Recolectar configuración
+                const config = {
+                    nicho: document.getElementById('nicho').value,
+                    publico: document.getElementById('publico').value,
+                    canalPrincipal: document.getElementById('canalPrincipal').value,
+                    experiencia: document.getElementById('experiencia').value,
+                    tipoProducto: document.getElementById('tipoProducto').value,
+                    rangoPrecio: document.getElementById('rangoPrecio').value,
+                    presupuestoAds: '$1000',
+                    roiObjetivo: '3x',
+                    breakEvenTime: '1 mes',
+                    tipoConversion: 'Venta directa',
+                    dispositivoTarget: 'Mobile',
+                    mercadoGeo: 'Tier 1'
+                };
+                
+                // Generar prompt
+                const prompt = PromptGenerator.generateProductDetectionPrompt(config);
+                
+                // Hacer request a la API
+                const response = await APIManager.makeRequest(prompt);
+                
+                if (!response) {
+                    throw new Error('No se recibió respuesta de la IA');
+                }
+                
+                // Procesar respuesta
+                const products = ResponseProcessor.processProductDetection(response, config);
+                
+                // Validar especificidad
+                const validation = ResponseProcessor.validateProductSpecificity(products, config);
+                
+                // Mostrar resultados
+                let html = '';
+                
+                if (validation.isValid) {
+                    html += '<div class="success">✅ Productos válidos y específicos detectados</div>';
+                } else {
+                    html += `<div class="error">❌ Problemas de especificidad: ${validation.reason}</div>`;
+                }
+                
+                html += '<h3>📦 Productos Detectados:</h3>';
+                
+                products.forEach((product, index) => {
+                    html += `
+                        <div class="product-card">
+                            <h4>${index + 1}. ${product.nombre}</h4>
+                            <p><strong>Precio:</strong> ${product.precio}</p>
+                            <p><strong>Comisión:</strong> ${product.comision}</p>
+                            <p><strong>Score:</strong> ${product.score}</p>
+                            <p><strong>Descripción:</strong> ${product.descripcion}</p>
+                            <p><strong>Pain Points:</strong> ${product.painPoints}</p>
+                            <p><strong>Emociones:</strong> ${product.emociones}</p>
+                            <p><strong>Triggers:</strong> ${product.triggers}</p>
+                        </div>
+                    `;
+                });
+                
+                html += '<h3>🔍 Información de Debug:</h3>';
+                html += `<p><strong>Configuración:</strong> ${JSON.stringify(config, null, 2)}</p>`;
+                html += `<p><strong>Respuesta de IA:</strong> ${response.substring(0, 500)}...</p>`;
+                
+                resultsContent.innerHTML = html;
+                
+            } catch (error) {
+                resultsContent.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
