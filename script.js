@@ -2112,3 +2112,16 @@ window.MarketInsightPro = {
 
 // ... al final del archivo ...
 window.UsageLimiter = UsageLimiter;
+UIManager.saveApiKey = async function() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+        this.showToast('Error', 'Debes ingresar una API Key', 'error');
+        return;
+    }
+    AppState.apiKey = apiKey;
+    localStorage.setItem('marketinsight_api_key', apiKey);
+    await detectarTipoAPI();
+    this.showToast('Éxito', 'API Key guardada', 'success');
+};
+
+
