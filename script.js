@@ -622,6 +622,9 @@ class UIManager {
         document.getElementById('openSpy')?.addEventListener('click', function() {
             UIManager.openModal('spyModal');
         });
+        document.getElementById('openFunnel')?.addEventListener('click', function() {
+            UIManager.openFunnelArchitect();
+        });
         
         // Modal Actions
         document.getElementById('validarOfertaBtn')?.addEventListener('click', this.validateOffer.bind(this));
@@ -934,6 +937,15 @@ class UIManager {
                     '<div class="detail-title">🎯 Estrategia</div>' +
                     '<div class="detail-content">' + (product.estrategia || 'Estrategia de conversión específica') + '</div>' +
                 '</div>' +
+            '</div>' +
+            
+            '<div class="product-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">' +
+                '<button class="btn btn-primary" onclick="UIManager.createFunnelFromProduct(' + index + ')" style="flex: 1; min-width: 140px;">' +
+                    '🎯 Crear Funnel' +
+                '</button>' +
+                '<button class="btn btn-outline" onclick="UIManager.generateContentForProduct(' + index + ')" style="flex: 1; min-width: 140px;">' +
+                    '✨ Contenido Viral' +
+                '</button>' +
             '</div>';
         
         return card;
@@ -1270,6 +1282,62 @@ class UIManager {
         }
         
         UIManager.showToast('Info', 'Nuevo análisis iniciado', 'info');
+    }
+
+    static openFunnelArchitect() {
+        // Guardar estado actual para que el Funnel Architect pueda usarlo
+        if (AppState.configuracion && AppState.productosDetectados.length > 0) {
+            const funnelData = {
+                configuracion: AppState.configuracion,
+                productos: AppState.productosDetectados,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('marketinsight_funnel_data', JSON.stringify(funnelData));
+        }
+        
+        // Abrir Funnel Architect
+        window.open('funnel-architect-standalone.html', '_blank');
+        this.showToast('Info', 'Abriendo Funnel Architect...', 'info');
+    }
+
+    static createFunnelFromProduct(productIndex) {
+        const product = AppState.productosDetectados[productIndex - 1];
+        
+        if (!product) {
+            this.showToast('Error', 'Producto no encontrado', 'error');
+            return;
+        }
+        
+        // Preparar datos específicos del producto para el funnel
+        const funnelData = {
+            configuracion: AppState.configuracion,
+            productos: [product], // Solo el producto seleccionado
+            selectedProduct: product,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem('marketinsight_funnel_data', JSON.stringify(funnelData));
+        
+        // Abrir Funnel Architect
+        window.open('funnel-architect-standalone.html', '_blank');
+        this.showToast('Éxito', `Creando funnel para ${product.nombre}`, 'success');
+    }
+
+    static generateContentForProduct(productIndex) {
+        const product = AppState.productosDetectados[productIndex - 1];
+        
+        if (!product) {
+            this.showToast('Error', 'Producto no encontrado', 'error');
+            return;
+        }
+        
+        // Pre-llenar el modal de contenido viral con datos del producto
+        document.getElementById('productoContenido').value = product.nombre;
+        document.getElementById('plataforma').value = 'TikTok'; // Default
+        document.getElementById('salesAngle').value = 'Problema/Solución';
+        
+        this.openModal('contenidoModal');
+        this.showToast('Info', `Generando contenido para ${product.nombre}`, 'info');
     }
 
     static toggleDebugMode() {

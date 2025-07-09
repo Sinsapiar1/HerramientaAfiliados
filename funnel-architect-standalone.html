@@ -1055,6 +1055,22 @@
                     console.error('Error loading stored data:', e);
                 }
             }
+            
+            // Check for MarketInsight data
+            const marketInsightData = localStorage.getItem('marketinsight_funnel_data');
+            if (marketInsightData) {
+                try {
+                    const importedData = JSON.parse(marketInsightData);
+                    createFunnelFromMarketInsight(importedData);
+                    
+                    // Clear the data after use to prevent stale data
+                    localStorage.removeItem('marketinsight_funnel_data');
+                    
+                    showToast('Éxito', 'Datos importados desde MarketInsight Pro', 'success');
+                } catch (e) {
+                    console.error('Error loading MarketInsight data:', e);
+                }
+            }
         }
 
         function bindEvents() {
@@ -1517,42 +1533,112 @@
         }
 
         function createFunnelFromMarketInsight(data) {
-            const producto = data.productos[0]; // Take first product
+            const producto = data.selectedProduct || data.productos[0]; // Take selected or first product
             const config = data.configuracion;
 
             // Auto-generate funnel based on imported data
             funnelData.name = `Funnel para ${producto?.nombre || 'Producto'}`;
             funnelData.objective = 'product-sale';
-            funnelData.audience = config.publico || 'Audiencia objetivo';
-            funnelData.trafficSource = config.canalPrincipal?.toLowerCase().replace(' ', '-') || 'facebook-ads';
+            funnelData.audience = config?.publico || 'Audiencia objetivo';
+            funnelData.trafficSource = config?.canalPrincipal?.toLowerCase().replace(' ', '-').replace('ads', '') || 'facebook';
 
             // Create optimized steps based on product data
             const productPrice = parseFloat(producto?.precio?.replace(/[^0-9.]/g, '')) || 99;
             const estimatedCVR = parseFloat(producto?.metricas?.CVR?.replace('%', '')) || 2.5;
+            const productType = config?.tipoProducto || 'digital';
 
-            funnelData.steps = [
-                {
-                    id: 1,
-                    type: 'landing',
-                    title: 'Landing Page',
-                    description: `Página optimizada para ${config.nicho}`,
-                    conversion: 25,
-                    value: 0,
-                    traffic: 1000
-                },
-                {
+            // Generate steps based on product type and price
+            const steps = [];
+            
+            // Landing page (always first)
+            steps.push({
+                id: 1,
+                type: 'landing',
+                title: 'Landing Page',
+                description: `Página optimizada para ${config?.nicho || 'tu nicho'}`,
+                conversion: 25,
+                value: 0,
+                traffic: 1000
+            });
+
+            // Add opt-in for higher value products
+            if (productPrice > 100) {
+                steps.push({
                     id: 2,
-                    type: 'sales',
-                    title: 'Sales Page',
-                    description: `Venta de ${producto?.nombre || 'Producto'}`,
-                    conversion: estimatedCVR,
-                    value: productPrice,
+                    type: 'optin',
+                    title: 'Opt-in Page',
+                    description: 'Captura de email con lead magnet',
+                    conversion: 35,
+                    value: 0,
                     traffic: 250
-                }
-            ];
+                });
+            }
+
+            // Sales page
+            steps.push({
+                id: steps.length + 1,
+                type: 'sales',
+                title: 'Sales Page',
+                description: `Venta de ${producto?.nombre || 'Producto'}`,
+                conversion: Math.max(estimatedCVR, 1.5),
+                value: productPrice,
+                traffic: productPrice > 100 ? 87 : 250
+            });
+
+            // Add upsell for digital products
+            if (productType === 'digital' || productType === 'curso') {
+                steps.push({
+                    id: steps.length + 1,
+                    type: 'upsell',
+                    title: 'Upsell',
+                    description: 'Oferta complementaria',
+                    conversion: 25,
+                    value: Math.round(productPrice * 0.6),
+                    traffic: Math.round((productPrice > 100 ? 87 : 250) * (estimatedCVR / 100))
+                });
+            }
+
+            // Thank you page
+            steps.push({
+                id: steps.length + 1,
+                type: 'thankyou',
+                title: 'Thank You Page',
+                description: 'Página de agradecimiento y entrega',
+                conversion: 100,
+                value: 0,
+                traffic: Math.round(steps[steps.length - 1].traffic * (steps[steps.length - 1].conversion / 100))
+            });
+
+            funnelData.steps = steps;
+
+            // Set traffic settings based on budget
+            const budget = config?.presupuestoAds || '$500-$1000';
+            let trafficVolume = 1000;
+            let adCost = 0.50;
+
+            if (budget.includes('$50-$200')) {
+                trafficVolume = 500;
+                adCost = 0.30;
+            } else if (budget.includes('$200-$500')) {
+                trafficVolume = 800;
+                adCost = 0.40;
+            } else if (budget.includes('$1000-$2500')) {
+                trafficVolume = 1500;
+                adCost = 0.60;
+            } else if (budget.includes('$2500+') || budget.includes('$5000+')) {
+                trafficVolume = 2500;
+                adCost = 0.80;
+            }
+
+            funnelData.settings = {
+                trafficVolume: trafficVolume,
+                adCost: adCost,
+                theme: 'modern'
+            };
 
             loadFunnelData();
             calculateMetrics();
+            renderFunnelSteps();
         }
 
         async function generateFunnelWithAI() {
