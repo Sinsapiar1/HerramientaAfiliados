@@ -21,9 +21,9 @@ window.MarketInsightConfig = {
     API: {
         gemini: {
             endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
-            maxRetries: 3,
-            retryDelay: 1000,
-            timeout: 30000,
+            maxRetries: 5,
+            retryDelay: 2000,
+            timeout: 45000,
             maxTokens: 8192,
             temperature: 0.7,
             topK: 40,
@@ -31,8 +31,8 @@ window.MarketInsightConfig = {
         },
         rateLimiting: {
             enabled: true,
-            requestsPerMinute: 60,
-            requestsPerHour: 1000
+            requestsPerMinute: 30,
+            requestsPerHour: 500
         }
     },
 

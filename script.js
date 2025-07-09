@@ -8,14 +8,16 @@
 // ===== CONFIGURATION & CONSTANTS =====
 const CONFIG = {
     GEMINI_API_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
-    MAX_RETRIES: 3,
-    RETRY_DELAY: 1000,
+    MAX_RETRIES: 5,
+    RETRY_DELAY: 2000,
     LOADING_MESSAGES: [
         'Analizando productos ganadores...',
         'Procesando datos de mercado...',
         'Calculando métricas de conversión...',
         'Identificando oportunidades...',
-        'Generando recomendaciones...'
+        'Generando recomendaciones...',
+        'Optimizando resultados...',
+        'Validando análisis...'
     ]
 };
 
@@ -807,11 +809,74 @@ class UIManager {
             
         } catch (error) {
             console.error('Error en análisis:', error);
-            this.showToast('Error', `Error en el análisis: ${error.message}`, 'error');
+            
+            // Show error with retry option
+            this.showErrorWithRetry(error.message, () => {
+                this.handleAnalysis(e);
+            });
+            
         } finally {
             AppState.isAnalyzing = false;
             this.showLoading(false);
         }
+    }
+
+    static showErrorWithRetry(message, retryCallback) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast error';
+        
+        toast.innerHTML = 
+            '<div class="toast-header">' +
+                '<div class="toast-title">Error en el análisis</div>' +
+                '<button class="toast-close">&times;</button>' +
+            '</div>' +
+            '<div class="toast-message">' + message + '</div>' +
+            '<div class="toast-actions" style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">' +
+                '<button class="btn btn-primary btn-sm" id="retryAnalysis">🔄 Reintentar</button>' +
+                '<button class="btn btn-outline btn-sm" id="useFallback">📊 Usar Datos de Ejemplo</button>' +
+            '</div>';
+        
+        container.appendChild(toast);
+        
+        // Close button
+        toast.querySelector('.toast-close').addEventListener('click', function() {
+            toast.remove();
+        });
+        
+        // Retry button
+        toast.querySelector('#retryAnalysis').addEventListener('click', function() {
+            toast.remove();
+            retryCallback();
+        });
+        
+        // Fallback button
+        toast.querySelector('#useFallback').addEventListener('click', function() {
+            toast.remove();
+            UIManager.useFallbackData();
+        });
+        
+        // Auto remove after 15 seconds (longer for error with actions)
+        setTimeout(function() {
+            toast.remove();
+        }, 15000);
+    }
+
+    static useFallbackData() {
+        const config = AppState.configuracion || {
+            nicho: 'Marketing Digital',
+            publico: 'Emprendedores online',
+            tipoProducto: 'digital',
+            canalPrincipal: 'Facebook Ads'
+        };
+        
+        const fallbackProducts = ResponseProcessor.generateFallbackProducts(config);
+        AppState.productosDetectados = fallbackProducts;
+        
+        this.displayResults(fallbackProducts);
+        this.showToast('Info', 'Usando datos de ejemplo mientras se resuelve el problema de la API', 'info');
     }
 
     static collectConfiguration() {
@@ -1517,6 +1582,10 @@ class APIManager {
         };
         
         try {
+            if (AppState.debugMode) {
+                console.log('🔗 Enviando request a Gemini API');
+            }
+
             const response = await fetch(
                 `${CONFIG.GEMINI_API_ENDPOINT}?key=${AppState.apiKey}`,
                 {
@@ -1529,11 +1598,34 @@ class APIManager {
             );
             
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                let errorMessage = `HTTP ${response.status}`;
+                
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error?.message || errorMessage;
+                } catch (e) {
+                    // If we can't parse error, use status
+                }
+                
+                // Handle specific error types
+                if (response.status === 503) {
+                    throw new Error('OVERLOADED: El modelo está sobrecargado. Reintentando automáticamente...');
+                } else if (response.status === 429) {
+                    throw new Error('RATE_LIMIT: Límite de solicitudes excedido. Esperando...');
+                } else if (response.status === 400) {
+                    throw new Error('BAD_REQUEST: Solicitud inválida. Verifica tu API Key.');
+                } else if (response.status === 401) {
+                    throw new Error('UNAUTHORIZED: API Key inválida o expirada.');
+                } else {
+                    throw new Error(errorMessage);
+                }
             }
             
             const data = await response.json();
+            
+            if (AppState.debugMode) {
+                console.log('📥 Respuesta recibida de Gemini API');
+            }
             
             if (data.candidates && data.candidates[0] && data.candidates[0].content) {
                 return data.candidates[0].content.parts[0].text;
@@ -1542,15 +1634,48 @@ class APIManager {
             }
             
         } catch (error) {
-            console.error('Error en API request:', error);
-            
-            if (retries > 0) {
-                console.log(`Reintentando... (${retries} intentos restantes)`);
-                await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
-                return this.makeRequest(prompt, retries - 1);
+            if (AppState.debugMode) {
+                console.error('❌ Error en API request:', error);
             }
             
-            throw error;
+            // Retry logic for specific errors
+            if (retries > 0) {
+                const shouldRetry = error.message.includes('OVERLOADED') || 
+                                 error.message.includes('503') || 
+                                 error.message.includes('RATE_LIMIT') ||
+                                 error.message.includes('429') ||
+                                 error.message.includes('network') ||
+                                 error.message.includes('timeout');
+                
+                if (shouldRetry) {
+                    // Progressive delay: longer for rate limits
+                    const baseDelay = CONFIG.RETRY_DELAY;
+                    const delayMultiplier = error.message.includes('RATE_LIMIT') ? 3 : 1;
+                    const delay = baseDelay * delayMultiplier * (CONFIG.MAX_RETRIES - retries + 1);
+                    
+                    console.log(`🔄 Reintentando en ${delay}ms... (${retries} intentos restantes)`);
+                    UIManager.showToast('Info', `Reintentando... ${retries} intentos restantes`, 'warning');
+                    
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return this.makeRequest(prompt, retries - 1);
+                }
+            }
+
+            // Clean up error message for user
+            let userMessage = error.message;
+            if (error.message.includes('OVERLOADED')) {
+                userMessage = 'El servicio de IA está temporalmente sobrecargado. Intenta nuevamente en unos minutos.';
+            } else if (error.message.includes('RATE_LIMIT')) {
+                userMessage = 'Has excedido el límite de solicitudes. Espera un momento antes de intentar de nuevo.';
+            } else if (error.message.includes('UNAUTHORIZED')) {
+                userMessage = 'Tu API Key es inválida o ha expirado. Verifica que esté correcta.';
+            } else if (error.message.includes('BAD_REQUEST')) {
+                userMessage = 'Error en la solicitud. Verifica tu API Key y que esté activa.';
+            } else if (error.message.includes('Failed to fetch')) {
+                userMessage = 'Error de conexión. Verifica tu internet y intenta nuevamente.';
+            }
+
+            throw new Error(userMessage);
         }
     }
 }

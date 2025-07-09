@@ -892,6 +892,18 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.4;
 }
 
+.toast-actions {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
 /* ===== RESULT DISPLAYS ===== */
 .validacion-results,
 .avatar-results,
