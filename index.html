@@ -28,6 +28,30 @@
                     <span class="badge">📊 IA Analytics</span>
                 </div>
                 
+                <div class="auth-section" id="authSection">
+                    <button class="btn btn-outline" id="loginBtn">
+                        🔐 Login
+                    </button>
+                    <button class="btn btn-primary" id="registerBtn">
+                        📝 Register
+                    </button>
+                </div>
+                
+                <div class="user-section" id="userSection" style="display: none;">
+                    <div class="user-info">
+                        <span class="user-email" id="userEmail"></span>
+                        <span class="user-plan" id="userPlan"></span>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn btn-sm btn-outline" id="adminPanelBtn" style="display: none;">
+                            🛠️ Admin
+                        </button>
+                        <button class="btn btn-sm btn-outline" id="logoutBtn">
+                            🚪 Logout
+                        </button>
+                    </div>
+                </div>
+                
                 <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
                     🌙
                 </button>
@@ -754,10 +778,80 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔐 Iniciar Sesión</h2>
+                <button class="modal-close" data-modal="loginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" class="input-field" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        🔐 Iniciar Sesión
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem;">
+                    ¿No tienes cuenta? <a href="#" id="showRegisterModal">Registrarse</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Crear Cuenta</h2>
+                <button class="modal-close" data-modal="registerModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="input-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="registerPassword">Contraseña</label>
+                        <input type="password" id="registerPassword" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="registerPasswordConfirm">Confirmar Contraseña</label>
+                        <input type="password" id="registerPasswordConfirm" class="input-field" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        📝 Crear Cuenta
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem;">
+                    ¿Ya tienes cuenta? <a href="#" id="showLoginModal">Iniciar Sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
     <!-- Scripts -->
+    <script src="firebase-setup.js"></script>
+    <script src="payment-system.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

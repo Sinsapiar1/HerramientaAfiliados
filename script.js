@@ -579,9 +579,166 @@ class UIManager {
         this.loadStoredData();
         this.initModals();
         this.initTabs();
+        this.initAuth();
+    }
+    
+    static initAuth() {
+        // Verificar estado de autenticación
+        AuthManager.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Usuario logueado
+                const userData = await UserManager.getUser(user.uid);
+                this.showUserInterface(user, userData);
+            } else {
+                // Usuario no logueado
+                this.showAuthInterface();
+            }
+        });
+    }
+    
+    static showUserInterface(user, userData) {
+        document.getElementById('authSection').style.display = 'none';
+        document.getElementById('userSection').style.display = 'flex';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userPlan').textContent = userData?.plan || 'free';
+        
+        // Mostrar botón admin si es administrador
+        if (userData?.isAdmin) {
+            document.getElementById('adminPanelBtn').style.display = 'block';
+        }
+        
+        // Mostrar estadísticas de uso
+        this.showUsageStats(user.uid);
+    }
+    
+    static showAuthInterface() {
+        document.getElementById('authSection').style.display = 'flex';
+        document.getElementById('userSection').style.display = 'none';
+        document.getElementById('adminPanelBtn').style.display = 'none';
+    }
+    
+    static async showUsageStats(userId) {
+        try {
+            const remaining = await UserManager.getRemainingAnalyses(userId);
+            const statsEl = document.getElementById('userPlan');
+            
+            if (remaining === 'Unlimited') {
+                statsEl.textContent = 'Unlimited';
+                statsEl.style.color = 'var(--success-color)';
+            } else {
+                statsEl.textContent = `${remaining} restantes`;
+                statsEl.style.color = remaining > 0 ? 'var(--text-secondary)' : 'var(--error-color)';
+            }
+        } catch (error) {
+            console.error('Error showing usage stats:', error);
+        }
+    }
+    
+    static async handleLogin(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            this.showToast('Error', 'Completa todos los campos', 'error');
+            return;
+        }
+        
+        try {
+            const result = await AuthManager.login(email, password);
+            
+            if (result.success) {
+                this.closeModal('loginModal');
+                this.showToast('Éxito', 'Sesión iniciada correctamente', 'success');
+                
+                if (result.isAdmin) {
+                    this.showToast('Info', '🛠️ Acceso de administrador activado', 'info');
+                }
+            } else {
+                this.showToast('Error', result.error, 'error');
+            }
+        } catch (error) {
+            this.showToast('Error', 'Error al iniciar sesión: ' + error.message, 'error');
+        }
+    }
+    
+    static async handleRegister(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+        
+        if (!email || !password || !confirmPassword) {
+            this.showToast('Error', 'Completa todos los campos', 'error');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            this.showToast('Error', 'Las contraseñas no coinciden', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            this.showToast('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
+            return;
+        }
+        
+        try {
+            const result = await AuthManager.register(email, password);
+            
+            if (result.success) {
+                this.closeModal('registerModal');
+                this.showToast('Éxito', 'Cuenta creada correctamente', 'success');
+                
+                if (result.isAdmin) {
+                    this.showToast('Info', '🛠️ Cuenta de administrador creada', 'info');
+                }
+            } else {
+                this.showToast('Error', result.error, 'error');
+            }
+        } catch (error) {
+            this.showToast('Error', 'Error al crear cuenta: ' + error.message, 'error');
+        }
+    }
+    
+    static async handleLogout() {
+        try {
+            const result = await AuthManager.logout();
+            
+            if (result.success) {
+                this.showToast('Éxito', 'Sesión cerrada correctamente', 'success');
+            } else {
+                this.showToast('Error', result.error, 'error');
+            }
+        } catch (error) {
+            this.showToast('Error', 'Error al cerrar sesión: ' + error.message, 'error');
+        }
     }
 
     static bindEvents() {
+        // Authentication
+        document.getElementById('loginBtn')?.addEventListener('click', () => this.openModal('loginModal'));
+        document.getElementById('registerBtn')?.addEventListener('click', () => this.openModal('registerModal'));
+        document.getElementById('logoutBtn')?.addEventListener('click', this.handleLogout.bind(this));
+        document.getElementById('adminPanelBtn')?.addEventListener('click', () => AdminPanel.showAdminPanel());
+        
+        document.getElementById('showRegisterModal')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.closeModal('loginModal');
+            this.openModal('registerModal');
+        });
+        
+        document.getElementById('showLoginModal')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.closeModal('registerModal');
+            this.openModal('loginModal');
+        });
+        
+        document.getElementById('loginForm')?.addEventListener('submit', this.handleLogin.bind(this));
+        document.getElementById('registerForm')?.addEventListener('submit', this.handleRegister.bind(this));
+        
         // API Configuration
         document.getElementById('saveApiKey')?.addEventListener('click', this.saveApiKey.bind(this));
         document.getElementById('testApiKey')?.addEventListener('click', this.testApiKey.bind(this));
@@ -769,6 +926,20 @@ class UIManager {
 
     static async handleAnalysis(e) {
         e.preventDefault();
+        
+        // Verificar autenticación
+        const user = AuthManager.getCurrentUser();
+        if (!user) {
+            this.showToast('Error', 'Debes iniciar sesión para usar esta función', 'error');
+            this.openModal('loginModal');
+            return;
+        }
+        
+        // Verificar límites de uso
+        const canAnalyze = await UsageLimiter.checkAndTrackUsage(user.uid);
+        if (!canAnalyze) {
+            return; // UsageLimiter ya mostró el modal apropiado
+        }
         
         if (AppState.isAnalyzing) {
             this.showToast('Aviso', 'Ya hay un análisis en progreso', 'warning');
@@ -1730,6 +1901,129 @@ class DebugManager {
         a.click();
         
         URL.revokeObjectURL(url);
+    }
+}
+
+// ===== USAGE LIMITER =====
+class UsageLimiter {
+    static async checkAndTrackUsage(userId) {
+        try {
+            const canAnalyze = await UserManager.canPerformAnalysis(userId);
+            
+            if (!canAnalyze) {
+                const remaining = await UserManager.getRemainingAnalyses(userId);
+                
+                if (remaining === 0) {
+                    this.showUpgradeModal(userId);
+                    return false;
+                }
+            }
+            
+            // Incrementar contador de uso
+            await UserManager.incrementAnalysisCount(userId);
+            
+            // Actualizar UI con nuevo contador
+            UIManager.showUsageStats(userId);
+            
+            return true;
+            
+        } catch (error) {
+            console.error('Error checking usage limits:', error);
+            UIManager.showToast('Error', 'Error verificando límites de uso', 'error');
+            return false;
+        }
+    }
+    
+    static showUpgradeModal(userId) {
+        const modal = document.createElement('div');
+        modal.className = 'modal active';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🚀 Límite Alcanzado</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Has alcanzado el límite de análisis de tu plan gratuito.</p>
+                    
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h3>Plan Pro</h3>
+                            <div class="price">$79<span>/mes</span></div>
+                            <ul class="features">
+                                <li>✅ Análisis ilimitados</li>
+                                <li>✅ Exportación PDF</li>
+                                <li>✅ Análisis avanzado</li>
+                                <li>✅ Soporte prioritario</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="PaymentManager.createCheckout('pro', '${userId}')">
+                                🚀 Upgrade a Pro
+                            </button>
+                        </div>
+                        
+                        <div class="pricing-card">
+                            <h3>Plan Agency</h3>
+                            <div class="price">$199<span>/mes</span></div>
+                            <ul class="features">
+                                <li>✅ Todo lo de Pro</li>
+                                <li>✅ White-label</li>
+                                <li>✅ Team management</li>
+                                <li>✅ API access</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="PaymentManager.createCheckout('agency', '${userId}')">
+                                🏢 Upgrade a Agency
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="limit-actions">
+                        <button class="btn btn-outline" onclick="UIManager.useFallbackData(); this.closest('.modal').remove();">
+                            📊 Usar Datos de Ejemplo
+                        </button>
+                        <button class="btn btn-secondary" onclick="UsageLimiter.resetTrial('${userId}')">
+                            🔄 Reset Trial (1 vez)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close button
+        modal.querySelector('.modal-close').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
+    
+    static async resetTrial(userId) {
+        try {
+            const userData = await UserManager.getUser(userId);
+            
+            if (userData.trialReset) {
+                UIManager.showToast('Error', 'Ya has usado tu reset de prueba', 'error');
+                return;
+            }
+            
+            // Reset analysis count and mark trial as reset
+            await UserManager.resetUserAnalyses(userId);
+            await db.collection('users').doc(userId).update({
+                trialReset: true,
+                trialResetDate: new Date()
+            });
+            
+            UIManager.showToast('Éxito', '🎉 Trial reiniciado - 5 análisis más disponibles', 'success');
+            
+            // Close modal
+            document.querySelector('.modal').remove();
+            
+            // Update UI
+            UIManager.showUsageStats(userId);
+            
+        } catch (error) {
+            console.error('Error resetting trial:', error);
+            UIManager.showToast('Error', 'Error al reiniciar trial', 'error');
+        }
     }
 }
 
