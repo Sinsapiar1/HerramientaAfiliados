@@ -33,6 +33,12 @@ window.MarketInsightConfig = {
             enabled: true,
             requestsPerMinute: 30,
             requestsPerHour: 500
+        },
+        paidTier: {
+            enabled: false, // Auto-detecta si es API de pago
+            requestsPerMinute: 1000,
+            requestsPerHour: 10000,
+            retryDelay: 500 // Menos delay para APIs de pago
         }
     },
 

@@ -728,11 +728,26 @@ class UIManager {
         UIManager.updateApiStatus('warning', '🔄 Probando conexión...');
         
         try {
+            const startTime = Date.now();
             const response = await APIManager.makeRequest('Hola, ¿estás funcionando?');
+            const responseTime = Date.now() - startTime;
             
             if (response) {
-                UIManager.updateApiStatus('success', '✅ Conexión exitosa');
-                UIManager.showToast('Éxito', 'API Key funcionando correctamente', 'success');
+                // Auto-detectar si es API de pago basado en velocidad de respuesta
+                const isPaidTier = responseTime < 2000; // APIs de pago responden más rápido
+                
+                if (isPaidTier) {
+                    UIManager.updateApiStatus('success', '✅ API Premium detectada - Rendimiento optimizado');
+                    UIManager.showToast('Éxito', `API Premium funcionando (${responseTime}ms)`, 'success');
+                    
+                    // Ajustar configuración para API de pago
+                    CONFIG.MAX_RETRIES = 2; // Menos reintentos necesarios
+                    CONFIG.RETRY_DELAY = 500; // Delay más corto
+                } else {
+                    UIManager.updateApiStatus('success', '✅ API Gratuita funcionando');
+                    UIManager.showToast('Éxito', `API funcionando (${responseTime}ms) - Puede haber delays en horarios pico`, 'success');
+                }
+                
                 return true;
             } else {
                 throw new Error('Respuesta vacía');
