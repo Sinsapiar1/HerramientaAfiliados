@@ -261,6 +261,5 @@ class PaymentUI {
 window.PaymentSystem = {
     PaymentManager,
     PaymentUI,
-    UsageLimiter,
     STRIPE_PLANS
 };
