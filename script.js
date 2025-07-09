@@ -2165,3 +2165,6 @@ window.MarketInsightPro = {
     AppState,
     CONFIG
 };
+
+// ... al final del archivo ...
+window.UsageLimiter = UsageLimiter;
