@@ -29,7 +29,41 @@ const AppState = {
     currentAnalysis: null,
     configuracion: {},
     resultados: {},
-    isAnalyzing: false
+    isAnalyzing: false,
+    isPremium: false
+};
+
+// Función para detectar si la API es premium o gratuita
+async function detectarTipoAPI() {
+    if (!AppState.apiKey) return;
+    const promptTest = "¿Cuál es la capital de Francia? Responde solo con una palabra.";
+    try {
+        const response = await APIManager.makeRequest(promptTest, 1);
+        if (response && response.toLowerCase().includes("paris")) {
+            // Si responde correctamente, asumimos premium (o al menos funcional)
+            AppState.isPremium = true;
+            UIManager.showToast('Éxito', 'API Premium funcionando', 'success');
+        } else {
+            AppState.isPremium = false;
+            UIManager.showToast('Info', 'API gratuita detectada. Algunas funciones pueden estar limitadas.', 'info');
+        }
+    } catch (e) {
+        AppState.isPremium = false;
+        UIManager.showToast('Info', 'API gratuita detectada. Algunas funciones pueden estar limitadas.', 'info');
+    }
+}
+
+// Llamar a la detección cuando se guarda la API Key
+UIManager.saveApiKey = async function() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+        this.showToast('Error', 'Debes ingresar una API Key', 'error');
+        return;
+    }
+    AppState.apiKey = apiKey;
+    localStorage.setItem('marketinsight_api_key', apiKey);
+    await detectarTipoAPI();
+    this.showToast('Éxito', 'API Key guardada', 'success');
 };
 
 // ===== CORE CLASSES =====
@@ -39,109 +73,19 @@ const AppState = {
  */
 class PromptGenerator {
     static generateProductDetectionPrompt(config) {
-        const analysisSelected = this.getSelectedAnalysis();
-        const analysisInstructions = this.buildAnalysisInstructions(analysisSelected);
-        const currentDate = new Date().toLocaleDateString('es-ES');
-        const timeOfDay = new Date().getHours();
-        const season = this.getCurrentSeason();
-        const marketTrends = this.getMarketTrends(config.nicho);
-        
-        return `Eres un CONSULTOR EXPERT en marketing de afiliados con 15+ años de experiencia. Tu misión es detectar productos REALES y ESPECÍFICOS que estén funcionando AHORA MISMO en el mercado.
-
-⚠️ REGLAS CRÍTICAS:
-1. NUNCA uses productos genéricos como "Curso de Marketing" o "Software Premium"
-2. SIEMPRE menciona productos REALES que existan actualmente
-3. Cada análisis debe ser ÚNICO basado en la configuración específica
-4. Usa datos actuales del mercado (${currentDate})
-
-🎯 CONTEXTO ULTRA-ESPECÍFICO:
-NICHO: "${config.nicho}"
-PÚBLICO: "${config.publico}"
-CANAL: ${config.canalPrincipal}
-EXPERIENCIA: ${config.experiencia}
-DISPOSITIVO: ${config.dispositivoTarget}
-MERCADO: ${config.mercadoGeo}
-PRESUPUESTO: ${config.presupuestoAds || 'No especificado'}
-ROI OBJETIVO: ${config.roiObjetivo || '3x'}
-RANGO PRECIO: ${config.rangoPrecio}
-TIPO PRODUCTO: ${config.tipoProducto}
-
-📊 CONTEXTO DE MERCADO ACTUAL:
-- Fecha: ${currentDate}
-- Hora del día: ${timeOfDay}h (${timeOfDay < 12 ? 'mañana' : timeOfDay < 18 ? 'tarde' : 'noche'})
-- Estación: ${season}
-- Tendencias del nicho: ${marketTrends}
-
-🔍 ANÁLISIS SOLICITADOS:
-${analysisInstructions}
-
-💡 INSTRUCCIONES ESPECÍFICAS:
-1. Investiga productos REALES en ${config.nicho} que estén trending en ${config.canalPrincipal}
-2. Considera la estacionalidad (${season}) y el momento del día (${timeOfDay}h)
-3. Adapta las recomendaciones al nivel de experiencia (${config.experiencia})
-4. Optimiza para el dispositivo objetivo (${config.dispositivoTarget})
-5. Considera el presupuesto disponible (${config.presupuestoAds})
-
-🎯 FORMATO OBLIGATORIO - PRODUCTO ESPECÍFICO:
-
-=== PRODUCTO [N] ===
-NOMBRE: [Nombre REAL y específico del producto]
-PRECIO: $[precio real]
-COMISION: [porcentaje real]% ($[cantidad calculada] por venta)
-SCORE: [0-100 basado en análisis real]
-GRAVITY: [Para ClickBank] / POPULARIDAD: [Alta/Media/Baja basada en datos]
-
-DESCRIPCION:
-[Por qué este producto específico es ganador AHORA MISMO en ${config.nicho}]
-
-PAIN_POINTS:
-[Problemas específicos que resuelve este producto en ${config.nicho}]
-
-EMOCIONES:
-[Emociones específicas que activa en ${config.publico}]
-
-TRIGGERS:
-[Triggers específicos para ${config.canalPrincipal} en ${config.mercadoGeo}]
-
-METRICAS_CONVERSION_ESPECIFICAS:
-CVR_${config.canalPrincipal}_${config.nicho}: [X.X]% (basado en datos reales)
-EPC_NICHO_ESPECIFICO: $[X.XX] (estimación realista)
-AOV_${config.dispositivoTarget}: $[XXX] (promedio del nicho)
-REFUND_RATE_NICHO: [X]% (tasa real del nicho)
-LTV_${config.tipoConversion}: $[XXX] (valor de vida real)
-ESTACIONALIDAD: [Cuándo vende más - considerando ${season}]
-HORARIO_OPTIMO_${config.canalPrincipal}: [Mejor horario para ${timeOfDay}h]
-
-ANALISIS_FINANCIERO_CONTEXTUAL:
-CPA_REAL_${config.canalPrincipal}_${config.mercadoGeo}: $[XX] (costo real)
-CPC_PROMEDIO_NICHO: $[X.XX] (promedio del mercado)
-ROI_REALISTA_${config.experiencia}: [X]x (basado en experiencia)
-BREAK_EVEN_${config.breakEvenTime}: [X] días (tiempo real)
-PROFIT_MARGIN: [XX]% (margen realista)
-ESCALABILIDAD: [X]/10 (potencial real)
-COMPETENCIA_NIVEL: [BAJO/MEDIO/ALTO] (análisis actual)
-SATURACION_ACTUAL: [%] (saturación real del mercado)
-
-PROGRAMAS_AFILIADOS:
-[Lista específica de programas donde está disponible este producto]
-
-ESTRATEGIA_CONVERSION_ESPECIFICA:
-[Estrategia específica para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds}]
-
-PRODUCTOS_COMPLEMENTARIOS_NICHO:
-[2-3 productos específicos para cross-selling con este producto]
-
-ALERTAS_ESPECIFICAS:
-⚠️ ERRORES_${config.experiencia}: [Errores específicos a evitar para ${config.experiencia}]
-🚫 EVITAR_EN_${config.mercadoGeo}: [Qué NO hacer en ${config.mercadoGeo}]
-📊 METRICAS_CLAVE_${config.canalPrincipal}: [KPIs específicos para ${config.canalPrincipal}]
-
-=== FIN PRODUCTO [N] ===
-
-VEREDICTO_FINAL_CONTEXTUAL: 
-[EXCELENTE/BUENO/SATURADO/EVITAR] específicamente para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds} en ${config.mercadoGeo} considerando ${season} y ${timeOfDay}h.
-
-⚠️ IMPORTANTE: Cada producto debe ser ÚNICO y específico. NO uses plantillas genéricas.`;
+        if (!AppState.isPremium) {
+            // Prompt simple para API gratuita
+            return `Dame 3 productos REALES y ESPECÍFICOS que sean tendencia en el nicho de ${config.nicho} para ${config.publico} en ${config.canalPrincipal}. Solo productos que existan actualmente, con nombre, precio y por qué son tendencia. No inventes productos genéricos.`;
+        } else {
+            // Prompt completo y detallado (el que ya tienes)
+            const analysisSelected = this.getSelectedAnalysis();
+            const analysisInstructions = this.buildAnalysisInstructions(analysisSelected);
+            const currentDate = new Date().toLocaleDateString('es-ES');
+            const timeOfDay = new Date().getHours();
+            const season = this.getCurrentSeason();
+            const marketTrends = this.getMarketTrends(config.nicho);
+            return `Eres un CONSULTOR EXPERT en marketing de afiliados con 15+ años de experiencia. Tu misión es detectar productos REALES y ESPECÍFICOS que estén funcionando AHORA MISMO en el mercado.\n\n⚠️ REGLAS CRÍTICAS:\n1. NUNCA uses productos genéricos como "Curso de Marketing" o "Software Premium"\n2. SIEMPRE menciona productos REALES que existan actualmente\n3. Cada análisis debe ser ÚNICO basado en la configuración específica\n4. Usa datos actuales del mercado (${currentDate})\n\n🎯 CONTEXTO ULTRA-ESPECÍFICO:\nNICHO: "${config.nicho}"\nPÚBLICO: "${config.publico}"\nCANAL: ${config.canalPrincipal}\nEXPERIENCIA: ${config.experiencia}\nDISPOSITIVO: ${config.dispositivoTarget}\nMERCADO: ${config.mercadoGeo}\nPRESUPUESTO: ${config.presupuestoAds || 'No especificado'}\nROI OBJETIVO: ${config.roiObjetivo || '3x'}\nRANGO PRECIO: ${config.rangoPrecio}\nTIPO PRODUCTO: ${config.tipoProducto}\n\n📊 CONTEXTO DE MERCADO ACTUAL:\n- Fecha: ${currentDate}\n- Hora del día: ${timeOfDay}h (${timeOfDay < 12 ? 'mañana' : timeOfDay < 18 ? 'tarde' : 'noche'})\n- Estación: ${season}\n- Tendencias del nicho: ${marketTrends}\n\n🔍 ANÁLISIS SOLICITADOS:\n${analysisInstructions}\n\n💡 INSTRUCCIONES ESPECÍFICAS:\n1. Investiga productos REALES en ${config.nicho} que estén trending en ${config.canalPrincipal}\n2. Considera la estacionalidad (${season}) y el momento del día (${timeOfDay}h)\n3. Adapta las recomendaciones al nivel de experiencia (${config.experiencia})\n4. Optimiza para el dispositivo objetivo (${config.dispositivoTarget})\n5. Considera el presupuesto disponible (${config.presupuestoAds})\n\n🎯 FORMATO OBLIGATORIO - PRODUCTO ESPECÍFICO:\n\n=== PRODUCTO [N] ===\nNOMBRE: [Nombre REAL y específico del producto]\nPRECIO: $[precio real]\nCOMISION: [porcentaje real]% ($[cantidad calculada] por venta)\nSCORE: [0-100 basado en análisis real]\nGRAVITY: [Para ClickBank] / POPULARIDAD: [Alta/Media/Baja basada en datos]\n\nDESCRIPCION:\n[Por qué este producto específico es ganador AHORA MISMO en ${config.nicho}]\n\nPAIN_POINTS:\n[Problemas específicos que resuelve este producto en ${config.nicho}]\n\nEMOCIONES:\n[Emociones específicas que activa en ${config.publico}]\n\nTRIGGERS:\n[Triggers específicos para ${config.canalPrincipal} en ${config.mercadoGeo}]\n\nMETRICAS_CONVERSION_ESPECIFICAS:\nCVR_${config.canalPrincipal}_${config.nicho}: [X.X]% (basado en datos reales)\nEPC_NICHO_ESPECIFICO: $[X.XX] (estimación realista)\nAOV_${config.dispositivoTarget}: $[XXX] (promedio del nicho)\nREFUND_RATE_NICHO: [X]% (tasa real del nicho)\nLTV_${config.tipoConversion}: $[XXX] (valor de vida real)\nESTACIONALIDAD: [Cuándo vende más - considerando ${season}]\nHORARIO_OPTIMO_${config.canalPrincipal}: [Mejor horario para ${timeOfDay}h]\n\nANALISIS_FINANCIERO_CONTEXTUAL:\nCPA_REAL_${config.canalPrincipal}_${config.mercadoGeo}: $[XX] (costo real)\nCPC_PROMEDIO_NICHO: $[X.XX] (promedio del mercado)\nROI_REALISTA_${config.experiencia}: [X]x (basado en experiencia)\nBREAK_EVEN_${config.breakEvenTime}: [X] días (tiempo real)\nPROFIT_MARGIN: [XX]% (margen realista)\nESCALABILIDAD: [X]/10 (potencial real)\nCOMPETENCIA_NIVEL: [BAJO/MEDIO/ALTO] (análisis actual)\nSATURACION_ACTUAL: [%] (saturación real del mercado)\n\nPROGRAMAS_AFILIADOS:\n[Lista específica de programas donde está disponible este producto]\n\nESTRATEGIA_CONVERSION_ESPECIFICA:\n[Estrategia específica para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds}]\n\nPRODUCTOS_COMPLEMENTARIOS_NICHO:\n[2-3 productos específicos para cross-selling con este producto]\n\nALERTAS_ESPECIFICAS:\n⚠️ ERRORES_${config.experiencia}: [Errores específicos a evitar para ${config.experiencia}]\n🚫 EVITAR_EN_${config.mercadoGeo}: [Qué NO hacer en ${config.mercadoGeo}]\n📊 METRICAS_CLAVE_${config.canalPrincipal}: [KPIs específicos para ${config.canalPrincipal}]\n\n=== FIN PRODUCTO [N] ===\n\nVEREDICTO_FINAL_CONTEXTUAL: \n[EXCELENTE/BUENO/SATURADO/EVITAR] específicamente para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds} en ${config.mercadoGeo} considerando ${season} y ${timeOfDay}h.\n\n⚠️ IMPORTANTE: Cada producto debe ser ÚNICO y específico. NO uses plantillas genéricas.`;
+        }
     }
 
     static generateContentPrompt(config) {
