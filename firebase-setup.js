@@ -3,12 +3,13 @@
 
 // Firebase config - REEMPLAZA CON TUS CREDENCIALES REALES
 const firebaseConfig = {
-  apiKey: "AIzaSyC...", // ← CAMBIAR: Tu API Key real
-  authDomain: "marketinsight-pro.firebaseapp.com", // ← CAMBIAR: Tu dominio
-  projectId: "marketinsight-pro", // ← CAMBIAR: Tu project ID
-  storageBucket: "marketinsight-pro.appspot.com", // ← CAMBIAR: Tu storage bucket
-  messagingSenderId: "123456789", // ← CAMBIAR: Tu sender ID
-  appId: "1:123456789:web:abcdef123456" // ← CAMBIAR: Tu app ID
+  apiKey: "AIzaSyAqVGZGdwrvvZoC1trRr8h8TNXrwyugHww",
+  authDomain: "marketingafiliados-c6eec.firebaseapp.com",
+  projectId: "marketingafiliados-c6eec",
+  storageBucket: "marketingafiliados-c6eec.firebasestorage.app",
+  messagingSenderId: "208888972841",
+  appId: "1:208888972841:web:e68d63fffebc2fe578fe38",
+  measurementId: "G-YVQLB05W65"
 };
 
 // Initialize Firebase (usando compat para simplicidad)
