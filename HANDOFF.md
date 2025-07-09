@@ -1,6 +1,6 @@
 # 📝 Handoff & Progreso del Proyecto – MarketInsight Pro
 
-> Documento vivo que resume el estado actual, los hitos completados y los próximos pasos del proyecto.
+> Documento vivo que resume el estado actual, los hitos completados, aprendizajes y próximos pasos del proyecto.
 
 ---
 
@@ -27,6 +27,8 @@
 | 6 | 2024-07 | **Límites de uso** + Modal Upgrade | `script.js`, `styles.css` |
 | 7 | 2024-07 | **Integración Stripe (Front)** | `payment-system.js` |
 | 8 | 2024-07 | Documentación de instalación | `SETUP_INSTRUCTIONS.md`, `MONETIZATION_ROADMAP.md` |
+| 9 | 2024-07 | **Prompt adaptativo según API Gemini** | `script.js` |
+|10 | 2024-07 | **Eliminación total de datos estáticos/fallbacks** | `script.js` |
 
 ---
 
@@ -35,7 +37,7 @@
 ```
 📂 root
 ├─ index.html              # SPA principal
-├─ script.js               # Lógica, UIManager, API, UsageLimiter
+├─ script.js               # Lógica, UIManager, API, UsageLimiter, prompts adaptativos
 ├─ styles.css              # Estilos globales + Admin Panel
 ├─ firebase-setup.js       # Auth + Firestore + AdminPanel
 ├─ payment-system.js       # Integración Stripe (front-end)
@@ -53,7 +55,34 @@
 
 ---
 
-## 4. Próximos Pasos (Roadmap Corto)
+## 4. Cambios y Aprendizajes Recientes
+
+### 🔄 Prompt Adaptativo (API Gemini)
+- El sistema ahora detecta automáticamente si la API Key de Gemini es gratuita o premium.
+- Si es premium, usa un prompt largo y detallado para el detector de productos.
+- Si es gratuita, usa un prompt más simple y directo para maximizar la probabilidad de respuesta.
+- El tipo de API se detecta haciendo una consulta de prueba y analizando la respuesta.
+
+### 🚫 Eliminación de Fallbacks y Datos Estáticos
+- Se eliminaron todos los productos de ejemplo y respuestas estáticas.
+- Si la IA no responde correctamente, el usuario ve un error claro y nunca datos genéricos.
+- Esto garantiza la integridad y profesionalismo de la plataforma.
+
+### 🧪 Aprendizajes y Limitaciones
+- La API gratuita de Gemini tiene limitaciones importantes para prompts complejos y comerciales.
+- El generador de avatares y otras funciones simples funcionan bien con la API gratuita.
+- El detector de productos solo funciona de forma óptima con API premium.
+- El parser y la validación de respuestas se han endurecido para evitar mostrar datos irrelevantes.
+- El sistema es ahora 100% dependiente de la IA para resultados, sin fallback local.
+
+### 🛠️ Refactor y Limpieza
+- Unificación de la clase UsageLimiter (solo una instancia global).
+- Corrección de referencias cruzadas entre scripts.
+- Mejoras en el manejo de errores y debug.
+
+---
+
+## 5. Próximos Pasos (Roadmap Corto)
 
 | Prioridad | Tarea | Responsable | ETA |
 |-----------|-------|-------------|-----|
@@ -62,17 +91,7 @@
 | 🟡 Media | Sistema de facturación/recibos PDF | — | 2 sem |
 | 🟠 Baja  | Modo equipo y sharing de proyectos | — | 1 mes |
 | 🟠 Baja  | Integración con redes de afiliados (API) | — | 1-2 meses |
-
----
-
-## 5. Checklist de Entorno
-
-- [x] Firebase Project creado
-- [x] Authentication (Email/Password) activo
-- [x] Firestore en modo producción
-- [ ] Reglas de seguridad actualizadas (ver README)
-- [ ] Stripe API Keys (test) insertadas en `payment-system.js`
-- [ ] Webhook endpoint configurado
+| 🟢 Alta | Mejorar parser y prompts para IA gratuita | — | 1 sem |
 
 ---
 
@@ -84,6 +103,7 @@
 | `SETUP_INSTRUCTIONS.md` | Cómo configurar Firebase y admin |
 | `MONETIZATION_ROADMAP.md` | Estrategia de monetización a 6-12 meses |
 | `API_TROUBLESHOOTING.md` | Solución de problemas de Google Gemini |
+| `MEJORAS_DETECTOR_PRODUCTOS.md` | Detalle de mejoras y experimentos recientes |
 
 ---
 
