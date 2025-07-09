@@ -312,5 +312,3 @@ window.PaymentSystem = {
     UsageLimiter,
     STRIPE_PLANS
 };
-
-export { PaymentManager, PaymentUI, UsageLimiter, STRIPE_PLANS };
