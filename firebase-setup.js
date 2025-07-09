@@ -18,7 +18,7 @@ const db = firebase.firestore();
 
 // ADMIN CONFIGURATION - TU COMO ADMINISTRADOR
 const ADMIN_CONFIG = {
-  adminEmail: "tu-email@gmail.com", // ← CAMBIAR: Tu email de admin
+  adminEmail: "jaime.pivet@gmail.com", // ← CAMBIAR: Tu email de admin
   adminUID: null, // Se configurará automáticamente
   permissions: {
     viewAllUsers: true,
