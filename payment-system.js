@@ -257,54 +257,6 @@ class PaymentUI {
     }
 }
 
-// Integration with main app
-class UsageLimiter {
-    static async checkAndTrackUsage(userId) {
-        try {
-            const result = await UsageTracker.trackAnalysis(userId);
-            
-            if (!result.success) {
-                if (result.needsUpgrade) {
-                    PaymentUI.showLimitReachedModal();
-                }
-                return false;
-            }
-            
-            return true;
-        } catch (error) {
-            console.error('Error checking usage:', error);
-            return false;
-        }
-    }
-    
-    static async showUsageStats(userId) {
-        try {
-            const stats = await UsageTracker.getUsageStats(userId);
-            
-            const statsHTML = `
-                <div class="usage-stats">
-                    <div class="plan-info">
-                        <h3>Current Plan: ${stats.plan.toUpperCase()}</h3>
-                        <p>Analyses used: ${stats.analysisCount}</p>
-                        <p>Remaining: ${stats.remaining}</p>
-                    </div>
-                    <div class="features">
-                        <h4>Your Features:</h4>
-                        <ul>
-                            ${stats.features.map(feature => `<li>${feature}</li>`).join('')}
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            return statsHTML;
-        } catch (error) {
-            console.error('Error getting usage stats:', error);
-            return '<p>Error loading usage statistics</p>';
-        }
-    }
-}
-
 // Export for use in main app
 window.PaymentSystem = {
     PaymentManager,
