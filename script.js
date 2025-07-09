@@ -2075,7 +2075,7 @@ class UsageLimiter {
                         <button class="btn btn-outline" onclick="UIManager.useFallbackData(); this.closest('.modal').remove();">
                             📊 Usar Datos de Ejemplo
                         </button>
-                        <button class="btn btn-secondary" onclick="UsageLimiter.resetTrial('${userId}')">
+                        <button class="btn btn-secondary" onclick="window.UsageLimiter.resetTrial('${userId}')">
                             🔄 Reset Trial (1 vez)
                         </button>
                     </div>
