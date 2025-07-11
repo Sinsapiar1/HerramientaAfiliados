@@ -6,7 +6,11 @@
  */
 
 // ===== CONFIGURATION & CONSTANTS =====
+// ===== CONFIGURATION & CONSTANTS ===== 
+// Reemplaza esta sección al inicio de tu script.js
+
 const CONFIG = {
+    // ✅ URL corregida - quitar "latest"
     GEMINI_API_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     MAX_RETRIES: 3,
     RETRY_DELAY: 1000,
@@ -19,13 +23,17 @@ const CONFIG = {
     ],
     API: {
         gemini: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxTokens: 8192,
-            retryDelay: 1000, // Default retry delay
-            maxRetries: 3, // Default max retries
-            endpoint: 'gemini-1.5-flash'
+            temperature: 0.3,  // ✅ Reducido para más determinismo
+            topK: 20,
+            topP: 0.8,
+            maxTokens: 3000,
+            retryDelay: 1000,
+            maxRetries: 3,
+            // ✅ Endpoints de fallback ordenados por prioridad
+            endpoints: [
+                'gemini-1.5-flash',
+                'gemini-1.5-pro'
+            ]
         }
     }
 };
