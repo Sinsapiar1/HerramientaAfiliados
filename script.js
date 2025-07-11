@@ -329,7 +329,8 @@ class ResponseProcessor {
 
     static extractProducts(text) {
         const products = [];
-        const productRegex = /=== PRODUCTO \[(\d+)\] ===([\s\S]*?)(?==== FIN PRODUCTO \[\d+\] ===|=== PRODUCTO \[\d+\] ===|VEREDICTO FINAL|$)/gi;
+        // Acepta distintas variantes: "PRODUCTO 1", "PRODUCTO [1]" o "PRODUCTO [N]" (por si el modelo copia literal)
+        const productRegex = /===\s*PRODUCTO\s*(?:\[?(\d+|N)\]?)[\s]*===([\s\S]*?)(?====\s*FIN PRODUCTO[\s\S]*?===|===\s*PRODUCTO|VEREDICTO\s+(?:FINAL|GLOBAL)|$)/gi;
         
         let match;
         while ((match = productRegex.exec(text)) !== null) {
