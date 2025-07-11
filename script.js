@@ -16,7 +16,17 @@ const CONFIG = {
         'Calculando métricas de conversión...',
         'Identificando oportunidades...',
         'Generando recomendaciones...'
-    ]
+    ],
+    API: {
+        gemini: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxTokens: 8192,
+            retryDelay: 1000, // Default retry delay
+            maxRetries: 3 // Default max retries
+        }
+    }
 };
 
 // ===== APPLICATION STATE =====
@@ -1431,22 +1441,19 @@ class UIManager {
  * Gestiona las llamadas a la API de Google Gemini
  */
 class APIManager {
-    static async makeRequest(prompt, retries = CONFIG.MAX_RETRIES) {
+    static async makeRequest(prompt, retries = CONFIG.API.gemini.maxRetries) {
         if (!AppState.apiKey) {
             throw new Error('API Key no configurada');
         }
         
+        const genCfg = CONFIG.API.gemini;
         const requestBody = {
-            contents: [{
-                parts: [{
-                    text: prompt
-                }]
-            }],
+            contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: 0.7,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 8192,
+                temperature: genCfg.temperature,
+                topK: genCfg.topK,
+                topP: genCfg.topP,
+                maxOutputTokens: genCfg.maxTokens
             }
         };
         
@@ -1463,8 +1470,22 @@ class APIManager {
             );
             
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                const status = response.status;
+                let msg = `HTTP error! status: ${status}`;
+                try {
+                    const errJson = await response.json();
+                    msg = errJson.error?.message || msg;
+                } catch {}
+
+                // Retry logic for rate-limit / overload
+                if ((status === 429 || status === 503 || /overloaded/i.test(msg)) && retries > 0) {
+                    const delay = CONFIG.API.gemini.retryDelay * (CONFIG.API.gemini.maxRetries - retries + 1);
+                    console.warn(`Modelo saturado o rate-limit. Reintentando en ${delay} ms… (${retries} restantes)`);
+                    await new Promise(r => setTimeout(r, delay));
+                    return this.makeRequest(prompt, retries - 1);
+                }
+
+                throw new Error(msg);
             }
             
             const data = await response.json();
