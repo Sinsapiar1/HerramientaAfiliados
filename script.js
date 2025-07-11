@@ -50,98 +50,25 @@ class PromptGenerator {
         const analysisSelected = this.getSelectedAnalysis();
         const analysisInstructions = this.buildAnalysisInstructions(analysisSelected);
         
-        return `🎯 MISIÓN: Detectar EXACTAMENTE 3 PRODUCTOS GANADORES **reales** y **verificados** para el nicho "${config.nicho}".
+        return `Genera 3 productos afiliados REALES para el nicho "${config.nicho}" pensados para el canal ${config.canalPrincipal}. Cada producto debe cumplir al menos 3 de estos filtros:
+• Gravity ClickBank > 50 o ⭐4.5+ (500+ reviews) en Amazon
+• Crecimiento >20 % en Google Trends últimos 90 días
+• EPC ≥ $2 y CVR ≥ 2 %
+• Refund-rate < 10 %
 
-👤 CONTEXTO DEL AFILIADO
-- Nicho: "${config.nicho}"
-- Público objetivo: "${config.publico}"
-- Canal principal: ${config.canalPrincipal}
-- Nivel de experiencia: ${config.experiencia}
-- Dispositivo objetivo: ${config.dispositivoTarget}
-- Mercado geográfico: ${config.mercadoGeo}
-
-💰 OBJETIVOS FINANCIEROS
-- Presupuesto ads: ${config.presupuestoAds || 'No especificado'}
-- ROI mínimo esperado: ${config.roiObjetivo || '3x'}
-- Tiempo break-even tolerable: ${config.breakEvenTime || '30 días'}
-- Tipo de conversión: ${config.tipoConversion || 'Venta directa'}
-- Rango de precios objetivo: ${config.rangoPrecio}
-- Tipo de producto buscado: ${config.tipoProducto}
-
-🔎 CRITERIOS DE SELECCIÓN ESTRICTOS (debe cumplirse **al menos 3**):
-1. Gravity ClickBank > 50  **o** puntuación Amazon ⭐4.5+ con 500+ reviews.
-2. Crecimiento >20 % en Google Trends los últimos 90 días.
-3. EPC ≥ $2 y CVR ≥ 2 % en campañas públicas conocidas.
-4. Refund-rate < 10 %.
-5. Ticket dentro del rango de precio indicado.
-
-📚 FUENTES A CONSIDERAR (menciona cuál aplicaste para cada producto):
-• ClickBank Marketplace Top Products
-• JVZoo Marketplace Best Sellers
-• Amazon "Best Sellers" Category "${config.nicho}" (si aplica)
-• Tendencias Google & Exploding Topics
-
-${analysisInstructions ? `🧠 ANÁLISIS EXTRA SOLICITADOS:\n${analysisInstructions}` : ''}
-
-⚠️ REGLAS OBLIGATORIAS
-• Genera **exactamente 3** productos (sin genéricos ni categorías).
-• Incluye **nombre + URL oficial** para validación rápida.
-• Cada producto debe cumplir los criterios de selección.
-• No inventes marcas ni métricas: usa estimaciones basadas en los datos públicos.
-• PROHIBIDO usar palabras como "Ejemplo", "Placeholder", "Producto genérico", "Nombre de un", "necesita sustituirse".
-• Si no logras encontrar 3 productos reales, responde **solo** con la palabra 'SIN_PRODUCTOS'.
-• Escribe en español neutro.
-
-FORMATO OBLIGATORIO (copia tal cual los encabezados):
-
+Formato EXACTO para cada uno (sin texto extra, sin ejemplos):
 === PRODUCTO [N] ===
-NOMBRE: [Nombre real del producto]
-URL_OFICIAL: [https://...]
-PRECIO: $[XX]
-COMISION: [porcentaje]% ($[XX] por venta)
-SCORE: [0-100]
-GRAVITY: [valor] / POPULARIDAD: [Alta/Media/Baja]
-
-DESCRIPCION:
-[Por qué es ganador y qué problema soluciona]
-
-PAIN_POINTS:
-[Problemas que resuelve]
-
-EMOCIONES:
-[Emociones involucradas]
-
-TRIGGERS:
-[Urgencia, escasez, curiosidad, etc.]
-
-METRICAS_CONVERSION_ESPECIFICAS:
-CVR_${config.canalPrincipal}_${config.nicho}: [X.X]%
-EPC_NICHO_ESPECIFICO: $[X.XX]
-AOV_${config.dispositivoTarget}: $[XXX]
-REFUND_RATE: [X]%
-LTV_${config.tipoConversion}: $[XXX]
-ESTACIONALIDAD: [Mes pico]
-HORARIO_OPTIMO_${config.canalPrincipal}: [Mejor horario]
-
-ANALISIS_FINANCIERO_CONTEXTUAL:
-CPA_REAL_${config.canalPrincipal}_${config.mercadoGeo}: $[XX]
-CPC_PROMEDIO_NICHO: $[X.XX]
-ROI_REALISTA_${config.experiencia}: [X]x
-BREAK_EVEN_${config.breakEvenTime}: [X] días
-PROFIT_MARGIN: [XX]%
-ESCALABILIDAD: [X]/10
-COMPETENCIA_NIVEL: [BAJO/MEDIO/ALTO]
-SATURACION_ACTUAL: [%]
-
-ESTRATEGIA_CONVERSION_ESPECIFICA:
-[Paso a paso breve para ${config.canalPrincipal} con presupuesto ${config.presupuestoAds}]
-
-PRODUCTOS_COMPLEMENTARIOS_NICHO:
-[2-3 productos específicos]
-
+NOMBRE: <nombre real>
+URL_OFICIAL: <https://…>
+PRECIO: $<num>
+COMISION: <porc>%
+GRAVITY: <num>
+CVR: <num>%   EPC: $<num>
+REFUND_RATE: <num>%
+DESCRIPCION: <120 carac máx>
 === FIN PRODUCTO [N] ===
 
-Al final, incluye un VEREDICTO_GLOBAL (1-2 líneas) indicando cuál de los 3 productos tiene mejor potencial para el perfil descrito.`;
+NO uses palabras "Ejemplo", "Placeholder" ni nada genérico. Si no encuentras 3 productos válidos responde exclusivamente con 'SIN_PRODUCTOS'.`;
     }
 
     static generateContentPrompt(config) {

@@ -24,10 +24,10 @@ window.MarketInsightConfig = {
             maxRetries: 3,
             retryDelay: 1000,
             timeout: 30000,
-            maxTokens: 8192,
-            temperature: 0.4,
-            topK: 40,
-            topP: 0.95
+            maxTokens: 3000,
+            temperature: 0.3,
+            topK: 20,
+            topP: 0.8
         },
         rateLimiting: {
             enabled: true,
