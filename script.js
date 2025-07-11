@@ -40,71 +40,75 @@ class PromptGenerator {
         const analysisSelected = this.getSelectedAnalysis();
         const analysisInstructions = this.buildAnalysisInstructions(analysisSelected);
         
-        return `Actúa como CONSULTOR EXPERTO en marketing de afiliados especializado en ${config.nicho} para ${config.canalPrincipal} en ${config.mercadoGeo} con 15+ años detectando productos ganadores REALES.
+        return `🎯 MISIÓN: Detectar EXACTAMENTE 3 PRODUCTOS GANADORES **reales** y **verificados** para el nicho "${config.nicho}".
 
-IMPORTANTE: Debes mencionar productos ESPECÍFICOS y REALES que existan actualmente en el mercado de ${config.nicho}, NO productos genéricos.
+👤 CONTEXTO DEL AFILIADO
+- Nicho: "${config.nicho}"
+- Público objetivo: "${config.publico}"
+- Canal principal: ${config.canalPrincipal}
+- Nivel de experiencia: ${config.experiencia}
+- Dispositivo objetivo: ${config.dispositivoTarget}
+- Mercado geográfico: ${config.mercadoGeo}
 
-CONTEXTO ULTRA-ESPECÍFICO DEL AFILIADO:
-📊 PERFIL COMPLETO:
-- Nicho: "${config.nicho}" (analizar competencia y tendencias específicas)
-- Público: "${config.publico}" (comportamiento específico en ${config.canalPrincipal})
-- Canal principal: ${config.canalPrincipal} (métricas específicas de este canal)
-- Experiencia: ${config.experiencia} (estrategias apropiadas para este nivel)
-- Dispositivo objetivo: ${config.dispositivoTarget} (optimización específica)
-- Mercado: ${config.mercadoGeo} (costos y comportamiento regional)
+💰 OBJETIVOS FINANCIEROS
+- Presupuesto ads: ${config.presupuestoAds || 'No especificado'}
+- ROI mínimo esperado: ${config.roiObjetivo || '3x'}
+- Tiempo break-even tolerable: ${config.breakEvenTime || '30 días'}
+- Tipo de conversión: ${config.tipoConversion || 'Venta directa'}
+- Rango de precios objetivo: ${config.rangoPrecio}
+- Tipo de producto buscado: ${config.tipoProducto}
 
-💰 PARÁMETROS FINANCIEROS:
-- Presupuesto: ${config.presupuestoAds || 'No especificado'}
-- ROI mínimo objetivo: ${config.roiObjetivo || '3x'}
-- Tolerancia break-even: ${config.breakEvenTime || '1 mes'}
-- Tipo conversión: ${config.tipoConversion || 'Venta directa'}
-- Rango precio productos: ${config.rangoPrecio}
-- Tipo producto: ${config.tipoProducto}
+🔎 CRITERIOS DE SELECCIÓN ESTRICTOS (debe cumplirse **al menos 3**):
+1. Gravity ClickBank > 50  **o** puntuación Amazon ⭐4.5+ con 500+ reviews.
+2. Crecimiento >20 % en Google Trends los últimos 90 días.
+3. EPC ≥ $2 y CVR ≥ 2 % en campañas públicas conocidas.
+4. Refund-rate < 10 %.
+5. Ticket dentro del rango de precio indicado.
 
-🎯 ANÁLISIS SOLICITADOS:
-${analysisInstructions}
+📚 FUENTES A CONSIDERAR (menciona cuál aplicaste para cada producto):
+• ClickBank Marketplace Top Products
+• JVZoo Marketplace Best Sellers
+• Amazon "Best Sellers" Category "${config.nicho}" (si aplica)
+• Tendencias Google & Exploding Topics
 
-⚠️ OBLIGATORIO: 
-1. Generar EXACTAMENTE 3 productos ESPECÍFICOS y REALES (no genéricos)
-2. Usar nombres de productos que realmente existen en ${config.nicho}
-3. Basarse en productos populares actuales en ${config.canalPrincipal}
-4. Incluir información específica del nicho ${config.nicho}
+${analysisInstructions ? `🧠 ANÁLISIS EXTRA SOLICITADOS:\n${analysisInstructions}` : ''}
 
-EJEMPLOS de especificidad requerida:
-❌ MAL: "Curso Digital de Alto Valor"
-✅ BIEN: "The Complete Web Developer Bootcamp 2024" o "Keto Diet Mastery Course"
+⚠️ REGLAS OBLIGATORIAS
+• Genera **exactamente 3** productos (sin genéricos ni categorías).
+• Incluye **nombre + URL oficial** para validación rápida.
+• Cada producto debe cumplir los criterios de selección.
+• No inventes marcas ni métricas: usa estimaciones basadas en los datos públicos.
+• Escribe en español neutro.
 
-❌ MAL: "Software SaaS Premium"  
-✅ BIEN: "ConvertKit Email Marketing Platform" o "Canva Pro Design Suite"
-
-FORMATO OBLIGATORIO para cada producto:
+FORMATO OBLIGATORIO (copia tal cual los encabezados):
 
 === PRODUCTO [N] ===
-NOMBRE: [Nombre específico del producto REAL]
-PRECIO: $[precio] 
-COMISION: [porcentaje]% ($[cantidad] por venta)
+NOMBRE: [Nombre real del producto]
+URL_OFICIAL: [https://...]
+PRECIO: $[XX]
+COMISION: [porcentaje]% ($[XX] por venta)
 SCORE: [0-100]
-GRAVITY: [Para ClickBank o similar] / POPULARIDAD: [Alta/Media/Baja]
+GRAVITY: [valor] / POPULARIDAD: [Alta/Media/Baja]
 
 DESCRIPCION:
-[Por qué es ganador, problema que resuelve, ventajas únicas]
+[Por qué es ganador y qué problema soluciona]
 
 PAIN_POINTS:
-[Problemas específicos que resuelve, frustraciones del público]
+[Problemas que resuelve]
 
 EMOCIONES:
-[Emociones involucradas: miedo, deseo, ansiedad, aspiración, etc.]
+[Emociones involucradas]
 
 TRIGGERS:
-[Lista limpia: urgencia, escasez, curiosidad, miedo, deseo, etc.]
+[Urgencia, escasez, curiosidad, etc.]
 
 METRICAS_CONVERSION_ESPECIFICAS:
 CVR_${config.canalPrincipal}_${config.nicho}: [X.X]%
 EPC_NICHO_ESPECIFICO: $[X.XX]
 AOV_${config.dispositivoTarget}: $[XXX]
-REFUND_RATE_NICHO: [X]%
+REFUND_RATE: [X]%
 LTV_${config.tipoConversion}: $[XXX]
-ESTACIONALIDAD: [Cuándo vende más]
+ESTACIONALIDAD: [Mes pico]
 HORARIO_OPTIMO_${config.canalPrincipal}: [Mejor horario]
 
 ANALISIS_FINANCIERO_CONTEXTUAL:
@@ -117,24 +121,15 @@ ESCALABILIDAD: [X]/10
 COMPETENCIA_NIVEL: [BAJO/MEDIO/ALTO]
 SATURACION_ACTUAL: [%]
 
-PROGRAMAS_AFILIADOS:
-[Lista específica de programas para ${config.nicho}]
-
 ESTRATEGIA_CONVERSION_ESPECIFICA:
-[Estrategia completa para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds}]
+[Paso a paso breve para ${config.canalPrincipal} con presupuesto ${config.presupuestoAds}]
 
 PRODUCTOS_COMPLEMENTARIOS_NICHO:
-[2-3 productos específicos para cross-selling]
-
-ALERTAS_ESPECIFICAS:
-⚠️ ERRORES_${config.experiencia}: [Errores típicos a evitar]
-🚫 EVITAR_EN_${config.mercadoGeo}: [Qué NO hacer]
-📊 METRICAS_CLAVE_${config.canalPrincipal}: [KPIs específicos]
+[2-3 productos específicos]
 
 === FIN PRODUCTO [N] ===
 
-VEREDICTO FINAL CONTEXTUAL: 
-[EXCELENTE/BUENO/SATURADO/EVITAR] específicamente para ${config.experiencia} en ${config.canalPrincipal} con presupuesto ${config.presupuestoAds} en ${config.mercadoGeo}.`;
+Al final, incluye un VEREDICTO_GLOBAL (1-2 líneas) indicando cuál de los 3 productos tiene mejor potencial para el perfil descrito.`;
     }
 
     static generateContentPrompt(config) {

@@ -25,7 +25,7 @@ window.MarketInsightConfig = {
             retryDelay: 1000,
             timeout: 30000,
             maxTokens: 8192,
-            temperature: 0.7,
+            temperature: 0.4,
             topK: 40,
             topP: 0.95
         },
