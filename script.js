@@ -228,6 +228,28 @@ Analiza todo con enfoque práctico para afiliados.`;
             .filter(Boolean)
             .join('\n');
     }
+
+    static generateSingleProductPrompt(config) {
+        return `Genera 1 producto afiliado REAL para el nicho "${config.nicho}" en ${config.canalPrincipal}. Debe cumplir al menos 3 filtros:
+• Gravity ClickBank > 50 / ⭐4.5+ 500 reviews
+• Tendencia >20 % últimos 90 días
+• EPC ≥ $2 y CVR ≥ 2 %
+• Refund-rate < 10 %
+
+Formato EXACTO (sin texto adicional):
+=== PRODUCTO ===
+NOMBRE: <nombre real>
+URL_OFICIAL: <https://…>
+PRECIO: $<num>
+COMISION: <porc>%
+GRAVITY: <num>
+CVR: <num>%   EPC: $<num>
+REFUND_RATE: <num>%
+DESCRIPCION: <120 carac máx>
+=== FIN PRODUCTO ===
+
+Si no encuentras producto válido responde solo 'SIN_PRODUCTOS'.`;
+    }
 }
 
 /**
@@ -712,25 +734,26 @@ class UIManager {
                 console.log('🔍 Configuración del análisis:', config);
             }
             
-            // Generate and send prompt
-            const prompt = PromptGenerator.generateProductDetectionPrompt(config);
-            
-            if (AppState.debugMode) {
-                console.log('📝 Prompt generado:', prompt);
+            const products = [];
+            for (let i = 0; i < 3; i++) {
+                const singlePrompt = PromptGenerator.generateSingleProductPrompt(config);
+                if (AppState.debugMode) {
+                    console.log(`📝 Prompt #${i+1}:`, singlePrompt);
+                }
+                try {
+                    const resp = await APIManager.makeRequest(singlePrompt);
+                    if (AppState.debugMode) {
+                        console.log(`🤖 Respuesta IA #${i+1}:`, resp);
+                    }
+                    const parsed = ResponseProcessor.processProductDetection(resp, config);
+                    if (parsed.length) {
+                        products.push(parsed[0]);
+                    }
+                } catch (err) {
+                    console.warn('Fallo en solicitud individual:', err.message);
+                }
             }
-            
-            const response = await APIManager.makeRequest(prompt);
-            
-            if (!response) {
-                throw new Error('No se recibió respuesta de la IA');
-            }
-            
-            if (AppState.debugMode) {
-                console.log('🤖 Respuesta de IA:', response);
-            }
-            
-            // Process response
-            const products = ResponseProcessor.processProductDetection(response, config);
+
             AppState.productosDetectados = products;
             
             if (AppState.debugMode) {
