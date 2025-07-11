@@ -78,6 +78,8 @@ ${analysisInstructions ? `🧠 ANÁLISIS EXTRA SOLICITADOS:\n${analysisInstructi
 • Incluye **nombre + URL oficial** para validación rápida.
 • Cada producto debe cumplir los criterios de selección.
 • No inventes marcas ni métricas: usa estimaciones basadas en los datos públicos.
+• PROHIBIDO usar palabras como "Ejemplo", "Placeholder", "Producto genérico", "Nombre de un", "necesita sustituirse".
+• Si no logras encontrar 3 productos reales, responde **solo** con la palabra 'SIN_PRODUCTOS'.
 • Escribe en español neutro.
 
 FORMATO OBLIGATORIO (copia tal cual los encabezados):
@@ -299,7 +301,11 @@ class ResponseProcessor {
         config = config || {};
         try {
             const cleanText = ResponseProcessor.cleanResponse(response);
-            const products = ResponseProcessor.extractProducts(cleanText);
+            let products = ResponseProcessor.extractProducts(cleanText);
+
+            // Filtrar placeholders genéricos que incumplen reglas
+            const placeholderRegex = /(Ejemplo|necesita sustituirse|Nombre de un|Producto genérico)/i;
+            products = products.filter(p => !placeholderRegex.test(p.nombre));
             
             if (products.length === 0) {
                 console.warn('No se pudieron extraer productos de la respuesta, usando fallbacks específicos');
