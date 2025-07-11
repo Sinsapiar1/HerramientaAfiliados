@@ -7,7 +7,7 @@
 
 // ===== CONFIGURATION & CONSTANTS =====
 const CONFIG = {
-    GEMINI_API_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+    GEMINI_API_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     MAX_RETRIES: 3,
     RETRY_DELAY: 1000,
     LOADING_MESSAGES: [
@@ -25,7 +25,7 @@ const CONFIG = {
             maxTokens: 8192,
             retryDelay: 1000, // Default retry delay
             maxRetries: 3, // Default max retries
-            endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent'
+            endpoint: 'gemini-1.5-flash'
         }
     }
 };
