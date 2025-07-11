@@ -24,7 +24,8 @@ const CONFIG = {
             topP: 0.95,
             maxTokens: 8192,
             retryDelay: 1000, // Default retry delay
-            maxRetries: 3 // Default max retries
+            maxRetries: 3, // Default max retries
+            endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent'
         }
     }
 };
@@ -1409,7 +1410,7 @@ class APIManager {
         
         try {
             const response = await fetch(
-                `${CONFIG.GEMINI_API_ENDPOINT}?key=${AppState.apiKey}`,
+                `${CONFIG.API.gemini.endpoint}?key=${AppState.apiKey}`,
                 {
                     method: 'POST',
                     headers: {
