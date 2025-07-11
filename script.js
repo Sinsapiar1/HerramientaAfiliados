@@ -1391,26 +1391,31 @@ class UIManager {
 /**
  * Gestiona las llamadas a la API de Google Gemini
  */
+/**
+ * ===== FIX PARA APIManager EN SCRIPT.JS =====
+ * Reemplaza la clase APIManager completa en tu script.js
+ */
+
 class APIManager {
-    static async makeRequest(prompt, retries = CONFIG.API.gemini.maxRetries) {
+    static async makeRequest(prompt, retries = CONFIG.MAX_RETRIES) {
         if (!AppState.apiKey) {
             throw new Error('API Key no configurada');
         }
         
-        const genCfg = CONFIG.API.gemini;
         const requestBody = {
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: genCfg.temperature,
-                topK: genCfg.topK,
-                topP: genCfg.topP,
-                maxOutputTokens: genCfg.maxTokens
+                temperature: 0.3,  // Reducido para más determinismo
+                topK: 20,
+                topP: 0.8,
+                maxOutputTokens: 3000
             }
         };
         
         try {
+            // ✅ FIX: Usar la URL completa correcta
             const response = await fetch(
-                `${CONFIG.API.gemini.endpoint}?key=${AppState.apiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AppState.apiKey}`,
                 {
                     method: 'POST',
                     headers: {
@@ -1422,21 +1427,30 @@ class APIManager {
             
             if (!response.ok) {
                 const status = response.status;
-                let msg = `HTTP error! status: ${status}`;
+                let errorMessage = `HTTP error! status: ${status}`;
+                
                 try {
-                    const errJson = await response.json();
-                    msg = errJson.error?.message || msg;
-                } catch {}
+                    const errorData = await response.json();
+                    errorMessage = errorData.error?.message || errorMessage;
+                } catch (e) {
+                    // Si no se puede parsear el error, usar el mensaje por defecto
+                }
 
-                // Retry logic for rate-limit / overload
-                if ((status === 429 || status === 503 || /overloaded/i.test(msg)) && retries > 0) {
-                    const delay = CONFIG.API.gemini.retryDelay * (CONFIG.API.gemini.maxRetries - retries + 1);
-                    console.warn(`Modelo saturado o rate-limit. Reintentando en ${delay} ms… (${retries} restantes)`);
-                    await new Promise(r => setTimeout(r, delay));
+                // Lógica de reintentos para errores específicos
+                if ((status === 429 || status === 503) && retries > 0) {
+                    const delay = CONFIG.RETRY_DELAY * (CONFIG.MAX_RETRIES - retries + 1);
+                    console.warn(`⚠️ Error ${status}. Reintentando en ${delay}ms... (${retries} restantes)`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
                     return this.makeRequest(prompt, retries - 1);
                 }
 
-                throw new Error(msg);
+                // Si es 404, intentar con modelo alternativo
+                if (status === 404 && retries > 0) {
+                    console.warn('⚠️ Modelo no encontrado. Intentando con gemini-1.5-pro...');
+                    return this.makeRequestWithFallback(prompt, retries - 1);
+                }
+
+                throw new Error(errorMessage);
             }
             
             const data = await response.json();
@@ -1448,14 +1462,65 @@ class APIManager {
             }
             
         } catch (error) {
-            console.error('Error en API request:', error);
+            if (AppState.debugMode) {
+                console.error('❌ Error en APIManager.makeRequest:', error);
+            }
             
-            if (retries > 0) {
-                console.log(`Reintentando... (${retries} intentos restantes)`);
+            if (retries > 0 && !error.message.includes('API Key')) {
+                console.log(`🔄 Reintentando... (${retries} intentos restantes)`);
                 await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
                 return this.makeRequest(prompt, retries - 1);
             }
             
+            throw error;
+        }
+    }
+
+    // Método fallback con modelo alternativo
+    static async makeRequestWithFallback(prompt, retries = 1) {
+        if (!AppState.apiKey) {
+            throw new Error('API Key no configurada');
+        }
+        
+        const requestBody = {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+                temperature: 0.3,
+                topK: 20,
+                topP: 0.8,
+                maxOutputTokens: 3000
+            }
+        };
+        
+        try {
+            // Intentar con gemini-1.5-pro como fallback
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${AppState.apiKey}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                }
+            );
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error('Respuesta inválida de la API');
+            }
+            
+        } catch (error) {
+            if (AppState.debugMode) {
+                console.error('❌ Error en fallback APIManager:', error);
+            }
             throw error;
         }
     }
