@@ -20,7 +20,7 @@ window.MarketInsightConfig = {
     // ===== CONFIGURACIÓN DE API =====
     API: {
         gemini: {
-            endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+            endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent',
             maxRetries: 3,
             retryDelay: 1000,
             timeout: 30000,
