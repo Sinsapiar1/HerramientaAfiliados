@@ -1,601 +1,499 @@
-/**
- * ===== CONFIGURACIÓN GLOBAL - MARKETINSIGHT PRO =====
- * Archivo de configuración centralizada para toda la aplicación
- * Version: 4.0
- */
+// ====================
+// CONFIGURACIÓN ACTUALIZADA (config.js)
+// ====================
 
-window.MarketInsightConfig = {
-    // ===== INFORMACIÓN DE LA APLICACIÓN =====
-    APP: {
-        name: 'MarketInsight Pro',
-        version: '4.0',
-        description: 'Suite completa de marketing automation para afiliados potenciada por IA',
-        author: 'MarketInsight Team',
-        license: 'MIT',
-        buildDate: '2024-12-08',
-        homepage: 'https://marketinsight-pro.com',
-        documentation: 'https://docs.marketinsight-pro.com'
-    },
-
-    // ===== CONFIGURACIÓN DE API =====
+const CONFIG = {
     API: {
         gemini: {
-            endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+            // Endpoints ordenados por prioridad (más recientes primero)
+            endpoints: [
+                'gemini-1.5-flash',
+                'gemini-1.5-pro', 
+                'gemini-1.5-flash-latest',
+                'gemini-1.5-pro-latest',
+                'gemini-pro-vision', // Backup
+                'text-bison-001' // Fallback PaLM2
+            ],
+            baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
+            listModelsUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
             maxRetries: 3,
             retryDelay: 1000,
-            timeout: 30000,
-            maxTokens: 3000,
-            temperature: 0.3,
-            topK: 20,
-            topP: 0.8
-        },
-        rateLimiting: {
-            enabled: true,
-            requestsPerMinute: 60,
-            requestsPerHour: 1000
+            timeout: 30000
         }
     },
-
-    // ===== CONFIGURACIÓN DE INTERFAZ =====
-    UI: {
-        themes: {
-            default: 'dark',
-            available: ['dark', 'light', 'auto'],
-            autoSwitchTime: {
-                darkStart: '19:00',
-                lightStart: '07:00'
-            }
-        },
-        animations: {
-            enabled: true,
-            duration: {
-                fast: 150,
-                normal: 300,
-                slow: 500
-            },
-            easing: 'ease'
-        },
-        responsive: {
-            breakpoints: {
-                mobile: 480,
-                tablet: 768,
-                desktop: 1024,
-                wide: 1200
-            }
-        },
-        toast: {
-            duration: 5000,
-            maxVisible: 5,
-            position: 'top-right'
-        }
+    GENERATION: {
+        temperature: 0.3,
+        topK: 20,
+        topP: 0.8,
+        maxOutputTokens: 3000,
+        candidateCount: 1
     },
-
-    // ===== CONFIGURACIÓN DE ALMACENAMIENTO =====
-    STORAGE: {
-        prefix: 'marketinsight_',
-        keys: {
-            apiKey: 'api_key',
-            theme: 'theme',
-            debug: 'debug',
-            userData: 'user_data',
-            analysisHistory: 'analysis_history',
-            preferences: 'preferences',
-            funnelData: 'funnel_data',
-            trendData: 'trend_data'
-        },
-        autoSave: true,
-        compression: false
-    },
-
-    // ===== CONFIGURACIÓN DE ANÁLISIS =====
-    ANALYSIS: {
-        basic: {
-            competencia: {
-                name: 'Análisis de Competencia',
-                description: 'Análisis profundo de competidores directos e indirectos',
-                icon: '🏆',
-                complexity: 'basic',
-                estimatedTime: 30
-            },
-            tendencias: {
-                name: 'Análisis de Tendencias',
-                description: 'Identificación de tendencias emergentes y oportunidades',
-                icon: '📈',
-                complexity: 'basic',
-                estimatedTime: 25
-            },
-            programas: {
-                name: 'Programas de Afiliados',
-                description: 'Evaluación de programas de afiliados más rentables',
-                icon: '🤝',
-                complexity: 'basic',
-                estimatedTime: 20
-            },
-            keywords: {
-                name: 'Keywords Rentables',
-                description: 'Research de keywords de alto valor comercial',
-                icon: '🔍',
-                complexity: 'basic',
-                estimatedTime: 35
-            },
-            estacionalidad: {
-                name: 'Estacionalidad',
-                description: 'Análisis de estacionalidad y timing óptimo',
-                icon: '📅',
-                complexity: 'basic',
-                estimatedTime: 15
-            },
-            rentabilidad: {
-                name: 'Rentabilidad',
-                description: 'Cálculo detallado de rentabilidad y márgenes',
-                icon: '💰',
-                complexity: 'basic',
-                estimatedTime: 20
-            }
-        },
-        expert: {
-            metricas: {
-                name: 'Métricas de Conversión',
-                description: 'CVR, EPC, AOV específicos del nicho',
-                icon: '📊',
-                complexity: 'expert',
-                estimatedTime: 45
-            },
-            financiero: {
-                name: 'Análisis Financiero',
-                description: 'ROI, CPA, Profit Margin contextualizados',
-                icon: '💹',
-                complexity: 'expert',
-                estimatedTime: 40
-            },
-            inteligencia: {
-                name: 'Inteligencia Competitiva',
-                description: 'Ad Spend, saturación del mercado',
-                icon: '🕵️',
-                complexity: 'expert',
-                estimatedTime: 50
-            },
-            journey: {
-                name: 'Customer Journey',
-                description: 'Mapeo del Customer Journey y puntos de fricción',
-                icon: '🛤️',
-                complexity: 'expert',
-                estimatedTime: 55
-            },
-            canales: {
-                name: 'Canales de Tráfico',
-                description: 'CPC, volúmenes, filtros por plataforma',
-                icon: '📺',
-                complexity: 'expert',
-                estimatedTime: 35
-            },
-            funnels: {
-                name: 'Funnels y Upsells',
-                description: 'LTV, upsells, cross-selling',
-                icon: '🎯',
-                complexity: 'expert',
-                estimatedTime: 60
-            }
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE HERRAMIENTAS =====
-    TOOLS: {
-        productDetector: {
-            name: 'Detector de Productos Ganadores',
-            minProducts: 3,
-            maxProducts: 3,
-            fallbackEnabled: true,
-            scoreRange: { min: 0, max: 100 }
-        },
-        offerValidator: {
-            name: 'Validador de Ofertas',
-            supportedDomains: ['clickbank.com', 'jvzoo.com', 'warriorplus.com', 'amazon.com'],
-            extractionPatterns: 10,
-            analysisDepth: 'comprehensive'
-        },
-        contentGenerator: {
-            name: 'Generador de Contenido Viral',
-            platforms: ['TikTok', 'Facebook', 'Instagram', 'Email', 'Blog', 'YouTube'],
-            maxVariations: 3,
-            metricsEstimation: true
-        },
-        avatarGenerator: {
-            name: 'Generador de Avatares',
-            modes: ['automatic', 'custom'],
-            detailLevel: 'comprehensive',
-            psychographicsEnabled: true
-        },
-        profitCalculator: {
-            name: 'Calculadora de Profit',
-            scenarios: ['conservative', 'realistic', 'optimistic'],
-            projectionPeriods: [30, 90, 365],
-            metricsTracking: true
-        },
-        copyTemplates: {
-            name: 'Copy Templates System',
-            version: '4.0',
-            types: ['facebook-ads', 'google-ads', 'email-sequence'],
-            abTestingEnabled: true,
-            variationsPerTemplate: 3
-        },
-        creativeSpy: {
-            name: 'Creative Spy System',
-            platforms: ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Google'],
-            analysisDepth: 'detailed',
-            competitorTracking: true
-        },
-        trendPredictor: {
-            name: 'Trend Predictor',
-            timeframes: ['30 días', '3 meses', '6 meses', '1 año', '2 años'],
-            analysisTypes: 8,
-            confidenceScoring: true
-        },
-        funnelArchitect: {
-            name: 'Funnel Architect',
-            stepTypes: ['landing', 'optin', 'vsl', 'sales', 'upsell', 'downsell', 'thankyou', 'email'],
-            dragDropEnabled: true,
-            analyticsIntegration: true,
-            exportFormats: ['pdf', 'json', 'image', 'copy']
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE MERCADOS =====
-    MARKETS: {
-        tiers: {
-            tier1: {
-                name: 'Tier 1',
-                countries: ['US', 'CA', 'UK', 'AU', 'DE', 'FR'],
-                avgCPC: { min: 0.50, max: 3.00 },
-                avgCVR: { min: 1.5, max: 8.0 },
-                competitionLevel: 'high'
-            },
-            tier2: {
-                name: 'Tier 2',
-                countries: ['ES', 'IT', 'NL', 'SE', 'NO', 'DK'],
-                avgCPC: { min: 0.30, max: 1.50 },
-                avgCVR: { min: 2.0, max: 10.0 },
-                competitionLevel: 'medium'
-            },
-            tier3: {
-                name: 'Tier 3',
-                countries: ['MX', 'AR', 'CL', 'CO', 'BR', 'PE'],
-                avgCPC: { min: 0.10, max: 0.80 },
-                avgCVR: { min: 2.5, max: 12.0 },
-                competitionLevel: 'low'
-            }
-        },
-        currencies: {
-            default: 'USD',
-            supported: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'MXN', 'BRL']
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE CANALES =====
-    CHANNELS: {
-        'facebook-ads': {
-            name: 'Facebook Ads',
-            avgCPC: { min: 0.30, max: 2.50 },
-            avgCVR: { min: 1.2, max: 6.0 },
-            bestAudiences: ['lookalike', 'interest', 'behavioral'],
-            adFormats: ['image', 'video', 'carousel', 'collection']
-        },
-        'google-ads': {
-            name: 'Google Ads',
-            avgCPC: { min: 0.50, max: 4.00 },
-            avgCVR: { min: 2.0, max: 8.0 },
-            bestKeywordTypes: ['commercial', 'transactional', 'branded'],
-            adFormats: ['search', 'display', 'shopping', 'video']
-        },
-        'tiktok-ads': {
-            name: 'TikTok Ads',
-            avgCPC: { min: 0.20, max: 1.80 },
-            avgCVR: { min: 0.8, max: 4.5 },
-            bestContent: ['ugc', 'trending', 'educational'],
-            adFormats: ['in-feed', 'spark', 'branded-hashtag']
-        },
-        'seo-organic': {
-            name: 'SEO Orgánico',
-            avgCPC: 0,
-            avgCVR: { min: 3.0, max: 15.0 },
-            timeToResults: '3-6 months',
-            bestContent: ['blog', 'guides', 'reviews']
-        },
-        'email-marketing': {
-            name: 'Email Marketing',
-            avgCPC: { min: 0.05, max: 0.30 },
-            avgOpenRate: { min: 15, max: 35 },
-            avgCTR: { min: 2, max: 8 },
-            avgCVR: { min: 1.0, max: 12.0 }
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE PRODUCTOS =====
-    PRODUCTS: {
-        types: {
-            digital: {
-                name: 'Digital',
-                avgPrice: { min: 27, max: 497 },
-                avgCommission: { min: 30, max: 70 },
-                deliveryTime: 'instant',
-                refundRate: { min: 3, max: 15 }
-            },
-            physical: {
-                name: 'Físico',
-                avgPrice: { min: 19, max: 299 },
-                avgCommission: { min: 4, max: 15 },
-                deliveryTime: '3-7 days',
-                refundRate: { min: 5, max: 20 }
-            },
-            software: {
-                name: 'Software',
-                avgPrice: { min: 97, max: 997 },
-                avgCommission: { min: 20, max: 50 },
-                deliveryTime: 'instant',
-                refundRate: { min: 5, max: 25 }
-            },
-            course: {
-                name: 'Curso Online',
-                avgPrice: { min: 197, max: 2997 },
-                avgCommission: { min: 40, max: 70 },
-                deliveryTime: 'instant',
-                refundRate: { min: 10, max: 30 }
-            }
-        },
-        priceRanges: {
-            '<$50': { min: 1, max: 49 },
-            '$50-$100': { min: 50, max: 100 },
-            '$100-$200': { min: 100, max: 200 },
-            '$200-$300': { min: 200, max: 300 },
-            '$300-$400': { min: 300, max: 400 },
-            '$400-$500': { min: 400, max: 500 },
-            '$500+': { min: 500, max: 10000 }
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE DEBUG =====
-    DEBUG: {
-        enabled: false,
-        logLevel: 'info', // 'error', 'warn', 'info', 'debug'
-        showPrompts: false,
-        showApiResponses: false,
-        performanceTracking: true,
-        errorReporting: true,
-        consoleGroups: true
-    },
-
-    // ===== CONFIGURACIÓN DE RENDIMIENTO =====
-    PERFORMANCE: {
-        lazyLoading: true,
-        caching: {
-            enabled: true,
-            duration: 24 * 60 * 60 * 1000, // 24 hours
-            maxSize: 50 * 1024 * 1024 // 50MB
-        },
-        compression: {
-            enabled: false,
-            algorithm: 'gzip'
-        },
-        analytics: {
-            trackUserActions: false,
-            trackPerformance: true,
-            trackErrors: true
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE SEGURIDAD =====
-    SECURITY: {
-        apiKeyEncryption: false,
-        sanitizeInputs: true,
-        validateResponses: true,
-        rateLimitingClient: true,
-        corsEnabled: true,
-        httpsOnly: true
-    },
-
-    // ===== CONFIGURACIÓN DE IDIOMAS =====
-    LOCALIZATION: {
-        defaultLanguage: 'es',
-        supportedLanguages: ['es', 'en', 'pt', 'fr'],
-        dateFormat: 'DD/MM/YYYY',
-        currencyFormat: 'es-ES',
-        numberFormat: 'es-ES'
-    },
-
-    // ===== MENSAJES DEL SISTEMA =====
-    MESSAGES: {
-        loading: [
-            'Analizando productos ganadores...',
-            'Procesando datos de mercado...',
-            'Calculando métricas de conversión...',
-            'Identificando oportunidades...',
-            'Generando recomendaciones...',
-            'Optimizando estrategias...',
-            'Validando resultados...',
-            'Finalizando análisis...'
-        ],
-        errors: {
-            noApiKey: 'Por favor configura tu API Key de Google Gemini',
-            invalidApiKey: 'La API Key proporcionada no es válida',
-            networkError: 'Error de conexión. Verifica tu internet',
-            rateLimitExceeded: 'Has excedido el límite de solicitudes. Espera un momento',
-            invalidInput: 'Los datos ingresados no son válidos',
-            analysisError: 'Error durante el análisis. Inténtalo de nuevo',
-            exportError: 'Error al exportar los datos',
-            importError: 'Error al importar los datos. Verifica el formato'
-        },
-        success: {
-            apiKeySaved: 'API Key guardada correctamente',
-            analysisComplete: 'Análisis completado exitosamente',
-            dataExported: 'Datos exportados correctamente',
-            dataImported: 'Datos importados correctamente',
-            settingsSaved: 'Configuración guardada'
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE INTEGRACIONES =====
-    INTEGRATIONS: {
-        enabled: false,
-        webhook: {
-            enabled: false,
-            url: '',
-            events: ['analysis_complete', 'export_generated']
-        },
-        analytics: {
-            googleAnalytics: {
-                enabled: false,
-                trackingId: ''
-            },
-            facebookPixel: {
-                enabled: false,
-                pixelId: ''
-            }
-        },
-        affiliateNetworks: {
-            clickbank: {
-                enabled: true,
-                apiKey: '',
-                baseUrl: 'https://api.clickbank.com'
-            },
-            jvzoo: {
-                enabled: true,
-                apiKey: '',
-                baseUrl: 'https://api.jvzoo.com'
-            }
-        }
-    },
-
-    // ===== CONFIGURACIÓN DE EXPERIMENTACIÓN =====
-    EXPERIMENTS: {
-        enabled: false,
-        abTesting: {
-            enabled: false,
-            variants: ['A', 'B'],
-            trafficSplit: 50
-        },
-        betaFeatures: {
-            enabled: false,
-            features: [
-                'advanced_analytics',
-                'ai_optimization',
-                'real_time_data'
-            ]
-        }
-    },
-
-    // ===== UTILIDADES =====
-    UTILS: {
-        // Obtener configuración específica
-        get: function(path) {
-            const keys = path.split('.');
-            let current = this;
-            
-            for (const key of keys) {
-                if (current[key] === undefined) {
-                    return null;
-                }
-                current = current[key];
-            }
-            
-            return current;
-        },
-
-        // Establecer configuración específica
-        set: function(path, value) {
-            const keys = path.split('.');
-            let current = this;
-            
-            for (let i = 0; i < keys.length - 1; i++) {
-                const key = keys[i];
-                if (current[key] === undefined) {
-                    current[key] = {};
-                }
-                current = current[key];
-            }
-            
-            current[keys[keys.length - 1]] = value;
-        },
-
-        // Validar configuración
-        validate: function() {
-            const required = [
-                'API.gemini.endpoint',
-                'STORAGE.prefix',
-                'UI.themes.default'
-            ];
-
-            for (const path of required) {
-                if (!this.get(path)) {
-                    console.error(`Configuración requerida faltante: ${path}`);
-                    return false;
-                }
-            }
-
-            return true;
-        },
-
-        // Resetear a valores por defecto
-        reset: function() {
-            // Recargar configuración desde el archivo original
-            location.reload();
-        },
-
-        // Exportar configuración actual
-        export: function() {
-            const config = { ...this };
-            delete config.UTILS; // No exportar las utilidades
-            
-            return JSON.stringify(config, null, 2);
-        },
-
-        // Importar configuración
-        import: function(configString) {
-            try {
-                const newConfig = JSON.parse(configString);
-                Object.assign(this, newConfig);
-                return true;
-            } catch (error) {
-                console.error('Error al importar configuración:', error);
-                return false;
-            }
-        }
-    }
+    DEBUG: localStorage.getItem('marketinsight_debug') === 'true'
 };
 
-// ===== INICIALIZACIÓN =====
-(function() {
-    // Validar configuración al cargar
-    if (!window.MarketInsightConfig.UTILS.validate()) {
-        console.warn('Algunas configuraciones pueden estar incompletas');
+// ====================
+// DETECTOR DE MODELOS DISPONIBLES
+// ====================
+
+class ModelDetector {
+    constructor() {
+        this.availableModels = [];
+        this.workingModel = null;
+        this.cache = new Map();
+        this.cacheKey = 'gemini_available_models';
+        this.cacheExpiry = 1000 * 60 * 60; // 1 hora
     }
 
-    // Aplicar configuración de debug si está habilitada
-    if (window.MarketInsightConfig.DEBUG.enabled) {
-        console.log('🚀 MarketInsight Pro Config Loaded', {
-            version: window.MarketInsightConfig.APP.version,
-            buildDate: window.MarketInsightConfig.APP.buildDate,
-            debugMode: true
+    // Lista todos los modelos disponibles con la API key del usuario
+    async listAvailableModels(apiKey) {
+        try {
+            // Verificar cache primero
+            const cached = this.getCachedModels();
+            if (cached && cached.length > 0) {
+                this.log('✅ Usando modelos desde cache:', cached);
+                return cached;
+            }
+
+            const response = await fetch(`${CONFIG.API.gemini.listModelsUrl}?key=${apiKey}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                signal: AbortSignal.timeout(CONFIG.API.gemini.timeout)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            // Filtrar modelos que soporten generateContent
+            const models = data.models
+                ?.filter(model => 
+                    model.supportedGenerationMethods?.includes('generateContent') ||
+                    model.supportedGenerationMethods?.includes('generate')
+                )
+                .map(model => ({
+                    name: model.name.replace('models/', ''),
+                    displayName: model.displayName,
+                    methods: model.supportedGenerationMethods
+                })) || [];
+
+            this.log('📋 Modelos detectados:', models);
+            
+            // Guardar en cache
+            this.setCachedModels(models);
+            this.availableModels = models;
+            
+            return models;
+        } catch (error) {
+            this.log('❌ Error detectando modelos:', error.message);
+            throw error;
+        }
+    }
+
+    // Encuentra el mejor modelo disponible basado en prioridades
+    async findBestModel(apiKey) {
+        try {
+            const availableModels = await this.listAvailableModels(apiKey);
+            
+            if (!availableModels || availableModels.length === 0) {
+                throw new Error('No se encontraron modelos disponibles con esta API key');
+            }
+
+            // Buscar por orden de prioridad
+            for (const preferredModel of CONFIG.API.gemini.endpoints) {
+                const foundModel = availableModels.find(model => 
+                    model.name === preferredModel || 
+                    model.name.includes(preferredModel)
+                );
+                
+                if (foundModel) {
+                    this.workingModel = foundModel.name;
+                    this.log('🎯 Modelo seleccionado:', this.workingModel);
+                    return this.workingModel;
+                }
+            }
+
+            // Si no encontramos ninguno de los preferidos, usar el primero disponible
+            const fallbackModel = availableModels[0].name;
+            this.workingModel = fallbackModel;
+            this.log('🔄 Usando modelo fallback:', fallbackModel);
+            return fallbackModel;
+
+        } catch (error) {
+            this.log('❌ Error encontrando modelo:', error.message);
+            throw error;
+        }
+    }
+
+    // Valida que un modelo específico funcione
+    async validateModel(modelName, apiKey) {
+        try {
+            const testPrompt = "Responde solo: OK";
+            const response = await this.makeTestRequest(modelName, testPrompt, apiKey);
+            
+            if (response && response.ok) {
+                this.log(`✅ Modelo ${modelName} validado correctamente`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            this.log(`❌ Modelo ${modelName} falló validación:`, error.message);
+            return false;
+        }
+    }
+
+    async makeTestRequest(modelName, prompt, apiKey) {
+        const url = `${CONFIG.API.gemini.baseUrl}/${modelName}:generateContent`;
+        
+        const requestBody = {
+            contents: [{
+                parts: [{
+                    text: prompt
+                }]
+            }],
+            generationConfig: {
+                maxOutputTokens: 10,
+                temperature: 0.1
+            }
+        };
+
+        return await fetch(`${url}?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody),
+            signal: AbortSignal.timeout(10000) // 10 segundos para test
         });
     }
 
-    // Configurar tema automático si está habilitado
-    if (window.MarketInsightConfig.UI.themes.default === 'auto') {
-        const now = new Date();
-        const hour = now.getHours();
-        const darkStart = parseInt(window.MarketInsightConfig.UI.themes.autoSwitchTime.darkStart.split(':')[0]);
-        const lightStart = parseInt(window.MarketInsightConfig.UI.themes.autoSwitchTime.lightStart.split(':')[0]);
-        
-        const isDarkTime = hour >= darkStart || hour < lightStart;
-        document.documentElement.setAttribute('data-theme', isDarkTime ? 'dark' : 'light');
+    // Gestión de cache
+    setCachedModels(models) {
+        const cacheData = {
+            models,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(this.cacheKey, JSON.stringify(cacheData));
     }
 
-    // Exposer configuración globalmente para fácil acceso
-    window.Config = window.MarketInsightConfig;
-    
-    console.log('✅ MarketInsight Pro Configuration Initialized');
-})();
+    getCachedModels() {
+        try {
+            const cached = localStorage.getItem(this.cacheKey);
+            if (!cached) return null;
 
-// ===== EXPORT PARA MÓDULOS =====
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = window.MarketInsightConfig;
+            const data = JSON.parse(cached);
+            const isExpired = (Date.now() - data.timestamp) > this.cacheExpiry;
+            
+            if (isExpired) {
+                localStorage.removeItem(this.cacheKey);
+                return null;
+            }
+
+            return data.models;
+        } catch {
+            return null;
+        }
+    }
+
+    clearCache() {
+        localStorage.removeItem(this.cacheKey);
+        this.log('🗑️ Cache de modelos limpiado');
+    }
+
+    log(message, ...args) {
+        if (CONFIG.DEBUG) {
+            console.log(`[ModelDetector] ${message}`, ...args);
+        }
+    }
 }
+
+// ====================
+// API MANAGER MEJORADO
+// ====================
+
+class ImprovedAPIManager {
+    constructor() {
+        this.modelDetector = new ModelDetector();
+        this.currentModel = null;
+        this.apiKey = null;
+        this.retryCount = 0;
+    }
+
+    async initialize(apiKey) {
+        this.apiKey = apiKey;
+        
+        try {
+            // Detectar y seleccionar el mejor modelo disponible
+            this.currentModel = await this.modelDetector.findBestModel(apiKey);
+            
+            // Validar que el modelo funcione
+            const isValid = await this.modelDetector.validateModel(this.currentModel, apiKey);
+            
+            if (!isValid) {
+                throw new Error(`El modelo ${this.currentModel} no responde correctamente`);
+            }
+
+            this.log(`🚀 API Manager inicializado con modelo: ${this.currentModel}`);
+            return true;
+
+        } catch (error) {
+            this.log('❌ Error inicializando API Manager:', error.message);
+            throw error;
+        }
+    }
+
+    async generateContent(prompt, retryAttempt = 0) {
+        if (!this.currentModel || !this.apiKey) {
+            throw new Error('API Manager no inicializado. Llama a initialize() primero.');
+        }
+
+        try {
+            const url = `${CONFIG.API.gemini.baseUrl}/${this.currentModel}:generateContent`;
+            
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }],
+                generationConfig: CONFIG.GENERATION
+            };
+
+            const response = await fetch(`${url}?key=${this.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody),
+                signal: AbortSignal.timeout(CONFIG.API.gemini.timeout)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error('No se recibieron respuestas del modelo');
+            }
+
+            return data.candidates[0].content.parts[0].text;
+
+        } catch (error) {
+            this.log(`❌ Error en intento ${retryAttempt + 1}:`, error.message);
+            
+            // Lógica de reintentos con fallback de modelos
+            if (retryAttempt < CONFIG.API.gemini.maxRetries) {
+                // Si es error 404, intentar con siguiente modelo
+                if (error.message.includes('404') || error.message.includes('not found')) {
+                    await this.tryNextModel();
+                }
+                
+                // Espera exponencial
+                await this.delay(CONFIG.API.gemini.retryDelay * Math.pow(2, retryAttempt));
+                return this.generateContent(prompt, retryAttempt + 1);
+            }
+
+            throw error;
+        }
+    }
+
+    async tryNextModel() {
+        try {
+            const availableModels = await this.modelDetector.listAvailableModels(this.apiKey);
+            const currentIndex = availableModels.findIndex(m => m.name === this.currentModel);
+            
+            if (currentIndex < availableModels.length - 1) {
+                this.currentModel = availableModels[currentIndex + 1].name;
+                this.log(`🔄 Cambiando a modelo: ${this.currentModel}`);
+            }
+        } catch (error) {
+            this.log('❌ No se pudo cambiar de modelo:', error.message);
+        }
+    }
+
+    // Método para generar múltiples productos (tu caso de uso específico)
+    async generateProducts(basePrompt, productCount = 3) {
+        const products = [];
+        
+        for (let i = 0; i < productCount; i++) {
+            try {
+                const prompt = `${basePrompt}\n\nGenera SOLO el producto #${i + 1}. NO uses placeholders como [PRODUCTO] o [PRECIO]. Sé específico y real.`;
+                
+                const response = await this.generateContent(prompt);
+                
+                // Verificar que no tenga placeholders
+                if (this.hasPlaceholders(response)) {
+                    this.log(`⚠️ Producto ${i + 1} tiene placeholders, regenerando...`);
+                    i--; // Reintentar este producto
+                    continue;
+                }
+                
+                products.push({
+                    id: i + 1,
+                    content: response,
+                    timestamp: new Date().toISOString()
+                });
+                
+                this.log(`✅ Producto ${i + 1} generado exitosamente`);
+                
+                // Pequeña pausa entre requests para evitar rate limiting
+                await this.delay(500);
+                
+            } catch (error) {
+                this.log(`❌ Error generando producto ${i + 1}:`, error.message);
+                throw error;
+            }
+        }
+        
+        return products;
+    }
+
+    hasPlaceholders(text) {
+        const placeholderPatterns = [
+            /\[.*?\]/g,  // [PRODUCTO], [PRECIO], etc.
+            /\{.*?\}/g,  // {producto}, {precio}, etc.
+            /XXX/gi,     // XXX, xxx
+            /PLACEHOLDER/gi,
+            /EJEMPLO/gi,
+            /SAMPLE/gi
+        ];
+        
+        return placeholderPatterns.some(pattern => pattern.test(text));
+    }
+
+    async delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Información de diagnóstico
+    getStatus() {
+        return {
+            currentModel: this.currentModel,
+            isInitialized: !!(this.currentModel && this.apiKey),
+            availableModels: this.modelDetector.availableModels,
+            workingModel: this.modelDetector.workingModel
+        };
+    }
+
+    // Limpiar cache y reinicializar
+    async reset() {
+        this.modelDetector.clearCache();
+        this.currentModel = null;
+        this.apiKey = null;
+        this.log('🔄 API Manager reseteado');
+    }
+
+    log(message, ...args) {
+        if (CONFIG.DEBUG) {
+            console.log(`[APIManager] ${message}`, ...args);
+        }
+    }
+}
+
+// ====================
+// INTEGRACIÓN CON TU CÓDIGO EXISTENTE
+// ====================
+
+// Reemplaza tu APIManager actual con esta instancia
+const apiManager = new ImprovedAPIManager();
+
+// Función para integrar con tu detector de productos
+async function detectProductsWithImprovedAPI(promptData) {
+    try {
+        // Mostrar loading
+        showLoadingMessage('🔍 Inicializando conexión con IA...');
+        
+        // Obtener API key
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            throw new Error('API Key no encontrada. Por favor configura tu API key primero.');
+        }
+
+        // Inicializar API Manager
+        await apiManager.initialize(apiKey);
+        
+        showLoadingMessage('🎯 Detectando productos ganadores...');
+        
+        // Generar el prompt base con tus datos
+        const basePrompt = generateProductDetectionPrompt(promptData);
+        
+        // Generar 3 productos
+        const products = await apiManager.generateProducts(basePrompt, 3);
+        
+        showLoadingMessage('🎉 ¡Productos detectados exitosamente!');
+        
+        return products;
+
+    } catch (error) {
+        console.error('❌ Error detectando productos:', error);
+        throw error;
+    }
+}
+
+// Función de utilidad para mostrar status de modelos
+async function showModelStatus() {
+    try {
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            console.log('❌ No hay API key configurada');
+            return;
+        }
+
+        const detector = new ModelDetector();
+        const models = await detector.listAvailableModels(apiKey);
+        
+        console.log('📋 Modelos disponibles:');
+        models.forEach(model => {
+            console.log(`  ✅ ${model.name} - ${model.displayName}`);
+        });
+
+        const bestModel = await detector.findBestModel(apiKey);
+        console.log(`🎯 Modelo recomendado: ${bestModel}`);
+
+    } catch (error) {
+        console.error('❌ Error obteniendo status:', error);
+    }
+}
+
+// Función para resetear y redetectar modelos
+async function resetAndRedetectModels() {
+    await apiManager.reset();
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (apiKey) {
+        await apiManager.initialize(apiKey);
+    }
+    console.log('🔄 Modelos redetectados');
+}
+
+// ====================
+// FUNCIONES DE DEBUG
+// ====================
+
+// Activar modo debug
+function enableDebugMode() {
+    localStorage.setItem('marketinsight_debug', 'true');
+    console.log('🐛 Modo debug activado');
+}
+
+// Desactivar modo debug
+function disableDebugMode() {
+    localStorage.setItem('marketinsight_debug', 'false');
+    console.log('🔕 Modo debug desactivado');
+}
+
+// Exportar para uso global
+window.marketInsightAPI = {
+    apiManager,
+    detectProducts: detectProductsWithImprovedAPI,
+    showModelStatus,
+    resetAndRedetectModels,
+    enableDebugMode,
+    disableDebugMode
+};
+
+console.log('🚀 Sistema de API mejorado cargado. Usa window.marketInsightAPI para acceder a las funciones.');
